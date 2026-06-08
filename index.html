@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Food Diary">
+<title>Food Diary</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: linear-gradient(135deg, #0f1923 0%, #1a2a3a 50%, #0f1923 100%);
+  min-height: 100vh;
+  font-family: Georgia, serif;
+  color: #e8dcc8;
+  padding: 20px 16px 60px;
+}
+.header { text-align: center; margin-bottom: 20px; padding-top: 8px; }
+.header-sub { font-size: 10px; letter-spacing: 4px; color: #7eb8a4; text-transform: uppercase; margin-bottom: 8px; }
+h1 { font-size: 24px; font-weight: normal; color: #e8dcc8; letter-spacing: 1px; }
+.divider { width: 60px; height: 2px; background: linear-gradient(90deg, #7eb8a4, #c4956a); margin: 10px auto 0; }
+
+.month-selector { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 8px; scrollbar-width: none; }
+.month-selector::-webkit-scrollbar { display: none; }
+.month-btn { padding: 8px 14px; border-radius: 8px; border: 1px solid #2a3f50; background: rgba(255,255,255,0.03); color: #8a9aaa; font-size: 11px; cursor: pointer; white-space: nowrap; font-family: Georgia, serif; flex-shrink: 0; letter-spacing: 1px; }
+.month-btn.active { border-color: #c4956a; background: rgba(196,149,106,0.15); color: #c4956a; }
+.day-selector { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 16px; scrollbar-width: none; }
+.day-selector::-webkit-scrollbar { display: none; }
+.day-btn { padding: 8px 12px; border-radius: 8px; border: 1px solid #2a3f50; background: rgba(255,255,255,0.03); color: #8a9aaa; font-size: 12px; cursor: pointer; white-space: nowrap; font-family: Georgia, serif; flex-shrink: 0; position: relative; }
+.day-btn.active { border-color: #7eb8a4; background: rgba(126,184,164,0.15); color: #7eb8a4; }
+.day-btn.future { opacity: 0.3; cursor: default; }
+.dot { position: absolute; top: 4px; right: 4px; width: 5px; height: 5px; border-radius: 50%; background: #7eb8a4; }
+.date-label { font-size: 12px; color: #c4956a; letter-spacing: 2px; margin-bottom: 16px; text-transform: uppercase; }
+.meal-block { margin-bottom: 14px; }
+.meal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.meal-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #7eb8a4; }
+.histamine-badge { font-size: 9px; color: #e07a5f; background: rgba(224,122,95,0.15); padding: 2px 8px; border-radius: 10px; letter-spacing: 1px; display: none; }
+.histamine-badge.show { display: block; }
+textarea { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid #2a3f50; border-radius: 10px; padding: 10px 14px; color: #e8dcc8; font-size: 15px; font-family: Georgia, serif; resize: none; outline: none; caret-color: white; -webkit-appearance: none; }
+textarea::placeholder { color: #4a6070; }
+textarea.flagged { border-color: rgba(224,122,95,0.5); }
+.histamine-box { margin-top: 8px; padding: 10px 14px; background: rgba(224,122,95,0.08); border: 1px solid rgba(224,122,95,0.3); border-radius: 10px; display: none; }
+.histamine-box.show { display: block; }
+.histamine-box-title { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #e07a5f; margin-bottom: 6px; }
+.histamine-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.histamine-tag { font-size: 12px; color: #e8dcc8; background: rgba(224,122,95,0.2); padding: 3px 10px; border-radius: 20px; text-transform: capitalize; font-family: Georgia, serif; }
+.symptoms-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #c4956a; margin-bottom: 6px; display: block; }
+.btn-save { width: 100%; padding: 14px; background: linear-gradient(135deg, #7eb8a4, #5a9e8a); border: none; border-radius: 10px; color: #0f1923; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-family: Georgia, serif; cursor: pointer; margin-bottom: 10px; }
+.btn-export { width: 100%; padding: 12px; background: transparent; border: 1px solid #c4956a; border-radius: 10px; color: #c4956a; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-family: Georgia, serif; cursor: pointer; margin-bottom: 10px; }
+.btn-clear { width: 100%; padding: 10px; background: transparent; border: 1px solid rgba(224,122,95,0.25); border-radius: 10px; color: rgba(224,122,95,0.5); font-size: 9px; letter-spacing: 3px; text-transform: uppercase; font-family: Georgia, serif; cursor: pointer; margin-bottom: 24px; }
+.summary-box { background: rgba(255,255,255,0.03); border: 1px solid #2a3f50; border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+.summary-title { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #7eb8a4; margin-bottom: 12px; }
+.summary-day { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #1a2a3a; }
+.summary-day:last-child { border-bottom: none; margin-bottom: 0; }
+.summary-date { font-size: 11px; color: #c4956a; margin-bottom: 4px; }
+.summary-meal { font-size: 12px; color: #8a9aaa; margin-bottom: 2px; }
+.summary-meal .lbl { color: #7eb8a4; }
+.summary-meal .flagged-text { color: #e07a5f; }
+.summary-symptom { font-size: 11px; color: #c4956a; margin-top: 4px; }
+.footer { text-align: center; font-size: 10px; color: #3a5060; letter-spacing: 1px; margin-top: 10px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-sub">Allergist Appointment — June 12</div>
+  <h1>Food &amp; Symptom Diary</h1>
+  <div class="divider"></div>
+</div>
+
+
+
+<div class="month-selector" id="monthSelector"></div>
+<div class="day-selector" id="daySelector"></div>
+<div class="date-label" id="dateLabel"></div>
+
+<!-- BREAKFAST -->
+<div class="meal-block">
+  <div class="meal-header">
+    <div class="meal-label">Breakfast</div>
+    <div class="histamine-badge" id="badge_Breakfast">⚠ HIGH HISTAMINE</div>
+  </div>
+  <textarea id="field_Breakfast" rows="2" placeholder="What did you have for breakfast?" oninput="checkHistamine('Breakfast')"></textarea>
+  <div class="histamine-box" id="box_Breakfast">
+    <div class="histamine-box-title">High Histamine Items Detected</div>
+    <div class="histamine-tags" id="tags_Breakfast"></div>
+  </div>
+</div>
+
+<!-- LUNCH -->
+<div class="meal-block">
+  <div class="meal-header">
+    <div class="meal-label">Lunch</div>
+    <div class="histamine-badge" id="badge_Lunch">⚠ HIGH HISTAMINE</div>
+  </div>
+  <textarea id="field_Lunch" rows="2" placeholder="What did you have for lunch?" oninput="checkHistamine('Lunch')"></textarea>
+  <div class="histamine-box" id="box_Lunch">
+    <div class="histamine-box-title">High Histamine Items Detected</div>
+    <div class="histamine-tags" id="tags_Lunch"></div>
+  </div>
+</div>
+
+<!-- MIDDAY SNACK -->
+<div class="meal-block">
+  <div class="meal-header">
+    <div class="meal-label">Midday Snack</div>
+    <div class="histamine-badge" id="badge_MiddaySnack">⚠ HIGH HISTAMINE</div>
+  </div>
+  <textarea id="field_MiddaySnack" rows="2" placeholder="What did you have for a midday snack?" oninput="checkHistamine('MiddaySnack')"></textarea>
+  <div class="histamine-box" id="box_MiddaySnack">
+    <div class="histamine-box-title">High Histamine Items Detected</div>
+    <div class="histamine-tags" id="tags_MiddaySnack"></div>
+  </div>
+</div>
+
+<!-- DINNER -->
+<div class="meal-block">
+  <div class="meal-header">
+    <div class="meal-label">Dinner</div>
+    <div class="histamine-badge" id="badge_Dinner">⚠ HIGH HISTAMINE</div>
+  </div>
+  <textarea id="field_Dinner" rows="2" placeholder="What did you have for dinner?" oninput="checkHistamine('Dinner')"></textarea>
+  <div class="histamine-box" id="box_Dinner">
+    <div class="histamine-box-title">High Histamine Items Detected</div>
+    <div class="histamine-tags" id="tags_Dinner"></div>
+  </div>
+</div>
+
+<!-- AFTER DINNER SNACK -->
+<div class="meal-block">
+  <div class="meal-header">
+    <div class="meal-label">After Dinner Snack</div>
+    <div class="histamine-badge" id="badge_AfterDinner">⚠ HIGH HISTAMINE</div>
+  </div>
+  <textarea id="field_AfterDinner" rows="2" placeholder="What did you have after dinner?" oninput="checkHistamine('AfterDinner')"></textarea>
+  <div class="histamine-box" id="box_AfterDinner">
+    <div class="histamine-box-title">High Histamine Items Detected</div>
+    <div class="histamine-tags" id="tags_AfterDinner"></div>
+  </div>
+</div>
+
+<!-- SYMPTOMS -->
+<div class="meal-block">
+  <label class="symptoms-label">Symptoms / Notes</label>
+  <textarea id="field_Symptoms" rows="3" placeholder="Any hives, throat tightening, itching, anxiety, rash location, medications taken..."></textarea>
+</div>
+
+
+<button class="btn-export" onclick="exportDiary()">Export for Allergist</button>
+<button class="btn-clear" onclick="clearData()">Clear All Data</button>
+
+<div id="summarySection"></div>
+<div class="footer">Dale Iannuzzi — Food &amp; Symptom Diary</div>
+
+<script>
+const FIELDS = ["Breakfast","Lunch","MiddaySnack","Dinner","AfterDinner","Symptoms"];
+const FIELD_LABELS = {
+  Breakfast: "Breakfast", Lunch: "Lunch", MiddaySnack: "Midday Snack",
+  Dinner: "Dinner", AfterDinner: "After Dinner Snack", Symptoms: "Symptoms"
+};
+
+const HIGH_HISTAMINE = [
+  "sardines","tuna","canned fish","salami","pepperoni","bacon","smoked",
+  "tomato","avocado","spinach","eggplant","banana","strawberry","citrus",
+  "lemon","orange","pineapple","alcohol","wine","beer","vinegar","soy sauce",
+  "ketchup","bbq sauce","parmesan","cheddar","aged cheese","cheese","yogurt",
+  "fermented","leftover","mayonnaise","hot dog","sausage","processed meat",
+  "pickles","mustard","worcestershire","anchovies"
+];
+
+function getItems(text) {
+  const lower = text.toLowerCase();
+  return HIGH_HISTAMINE.filter(f => lower.includes(f));
+}
+
+function checkHistamine(id) {
+  const val = document.getElementById("field_" + id).value;
+  const items = getItems(val);
+  const flagged = items.length > 0;
+  document.getElementById("field_" + id).className = flagged ? "flagged" : "";
+  document.getElementById("badge_" + id).className = "histamine-badge" + (flagged ? " show" : "");
+  document.getElementById("box_" + id).className = "histamine-box" + (flagged ? " show" : "");
+  const tags = document.getElementById("tags_" + id);
+  tags.innerHTML = "";
+  items.forEach(item => {
+    const span = document.createElement("span");
+    span.className = "histamine-tag";
+    span.textContent = item;
+    tags.appendChild(span);
+  });
+}
+
+function getTodayKey() {
+  return new Date().toISOString().split("T")[0];
+}
+
+function formatDate(d) {
+  return new Date(d + "T12:00:00").toLocaleDateString("en-CA", { weekday: "long", month: "long", day: "numeric" });
+}
+
+function formatShort(d) {
+  if (d === getTodayKey()) return "Today";
+  return new Date(d + "T12:00:00").toLocaleDateString("en-CA", { weekday: "short", day: "numeric" });
+}
+
+function loadData() {
+  try { return JSON.parse(localStorage.getItem("foodDiary") || "{}"); } catch(e) { return {}; }
+}
+
+function saveData(d) { localStorage.setItem("foodDiary", JSON.stringify(d)); }
+
+let activeDate = getTodayKey();
+
+const START_DATE = "2026-05-31";
+let activeMonth = getTodayKey().substring(0, 7); // "2026-06"
+
+function getMonths() {
+  const months = [];
+  const start = new Date(START_DATE + "T12:00:00");
+  const today = new Date();
+  let cur = new Date(start.getFullYear(), start.getMonth(), 1);
+  while (cur <= today) {
+    months.push(cur.toISOString().substring(0, 7));
+    cur.setMonth(cur.getMonth() + 1);
+  }
+  return months;
+}
+
+function getDaysForMonth(monthKey) {
+  const [year, month] = monthKey.split("-").map(Number);
+  const todayKey = getTodayKey();
+  const days = [];
+  const startDay = (monthKey === "2026-05") ? 31 : 1;
+  const daysInMonth = new Date(year, month, 0).getDate();
+  for (let d = startDay; d <= daysInMonth; d++) {
+    const dateStr = `${year}-${String(month).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    if (dateStr <= todayKey) days.push(dateStr);
+  }
+  return days;
+}
+
+function formatMonthLabel(monthKey) {
+  const d = new Date(monthKey + "-01T12:00:00");
+  return d.toLocaleDateString("en-CA", { month: "short", year: "numeric" });
+}
+
+function formatDayLabel(dateStr) {
+  const d = new Date(dateStr + "T12:00:00");
+  const today = getTodayKey();
+  if (dateStr === today) return "Today";
+  return d.toLocaleDateString("en-CA", { weekday: "short", day: "numeric" });
+}
+
+function renderMonthSelector() {
+  const sel = document.getElementById("monthSelector");
+  sel.innerHTML = "";
+  getMonths().forEach(month => {
+    const btn = document.createElement("button");
+    btn.className = "month-btn" + (month === activeMonth ? " active" : "");
+    btn.textContent = formatMonthLabel(month);
+    btn.onclick = () => {
+      autoSave();
+      activeMonth = month;
+      // Set active date to first available day of that month
+      const days = getDaysForMonth(month);
+      if (days.length > 0) {
+        // If today is in this month use today, else last day
+        const today = getTodayKey();
+        activeDate = days.includes(today) ? today : days[days.length - 1];
+      }
+      renderMonthSelector();
+      renderDaySelector();
+      loadDay();
+    };
+    sel.appendChild(btn);
+  });
+  // Scroll active month into view
+  const active = sel.querySelector(".active");
+  if (active) active.scrollIntoView({ inline: "center", behavior: "smooth" });
+}
+
+function renderDaySelector() {
+  const data = loadData();
+  const sel = document.getElementById("daySelector");
+  sel.innerHTML = "";
+  getDaysForMonth(activeMonth).forEach(day => {
+    const btn = document.createElement("button");
+    btn.className = "day-btn" + (day === activeDate ? " active" : "");
+    btn.textContent = formatDayLabel(day);
+    if (data[day] && day !== activeDate) {
+      const dot = document.createElement("span");
+      dot.className = "dot";
+      btn.appendChild(dot);
+    }
+    btn.onclick = () => {
+      autoSave();
+      activeDate = day;
+      renderDaySelector();
+      loadDay();
+    };
+    sel.appendChild(btn);
+  });
+  document.getElementById("dateLabel").textContent = formatDate(activeDate);
+  // Scroll active day into view
+  const active = sel.querySelector(".active");
+  if (active) active.scrollIntoView({ inline: "center", behavior: "smooth" });
+}
+
+function autoSave() {
+  const data = loadData();
+  const dayData = {};
+  let hasContent = false;
+  FIELDS.forEach(id => {
+    const el = document.getElementById("field_" + id);
+    if (el && el.value.trim()) {
+      dayData[id] = el.value.trim();
+      hasContent = true;
+    }
+  });
+  if (hasContent) {
+    data[activeDate] = dayData;
+    saveData(data);
+  } else {
+    // Remove the date entry if all fields are empty
+    if (data[activeDate]) {
+      delete data[activeDate];
+      saveData(data);
+    }
+  }
+}
+
+function loadDay() {
+  const data = loadData();
+  const day = data[activeDate] || {};
+  FIELDS.forEach(id => {
+    const el = document.getElementById("field_" + id);
+    if (el) {
+      el.value = day[id] || "";
+      if (id !== "Symptoms") checkHistamine(id);
+    }
+  });
+  renderDaySelector();
+  renderSummary();
+}
+
+function saveEntry() {
+  const data = loadData();
+  if (!data[activeDate]) data[activeDate] = {};
+  FIELDS.forEach(id => {
+    const el = document.getElementById("field_" + id);
+    if (el) data[activeDate][id] = el.value.trim();
+  });
+  saveData(data);
+  const btn = document.getElementById("saveBtn");
+  btn.textContent = "✓ Saved";
+  btn.style.background = "linear-gradient(135deg, #4a9e84, #3a8e74)";
+  setTimeout(() => {
+    btn.textContent = "Save Entry";
+    btn.style.background = "linear-gradient(135deg, #7eb8a4, #5a9e8a)";
+  }, 2000);
+  renderDaySelector();
+  renderSummary();
+}
+
+function renderSummary() {
+  const data = loadData();
+  const days = Object.keys(data).sort().reverse();
+  const section = document.getElementById("summarySection");
+  if (days.length === 0) { section.innerHTML = ""; return; }
+  let html = '<div class="summary-box"><div class="summary-title">Diary Summary</div>';
+  let hasAnyContent = false;
+  days.forEach(day => {
+    const mealIds = ["Breakfast","Lunch","MiddaySnack","Dinner","AfterDinner"];
+    const hasMeals = mealIds.some(id => data[day][id] && data[day][id].trim());
+    const hasSymptoms = data[day].Symptoms && data[day].Symptoms.trim();
+    if (!hasMeals && !hasSymptoms) return; // skip empty days
+    hasAnyContent = true;
+    html += '<div class="summary-day"><div class="summary-date">' + formatDate(day) + '</div>';
+    mealIds.forEach(id => {
+      if (data[day][id]) {
+        const flagged = getItems(data[day][id]).length > 0;
+        html += '<div class="summary-meal"><span class="lbl">' + FIELD_LABELS[id] + ': </span>';
+        html += '<span class="' + (flagged ? 'flagged-text' : '') + '">' + data[day][id] + '</span></div>';
+      }
+    });
+    if (hasSymptoms) html += '<div class="summary-symptom">⚡ ' + data[day].Symptoms + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+  section.innerHTML = hasAnyContent ? html : "";
+}
+
+function clearData() {
+  if (confirm("Clear all diary entries? This cannot be undone.")) {
+    localStorage.removeItem("foodDiary");
+    FIELDS.forEach(id => {
+      const el = document.getElementById("field_" + id);
+      if (el) { el.value = ""; if (id !== "Symptoms") checkHistamine(id); }
+    });
+    renderDaySelector();
+    renderSummary();
+  }
+}
+
+function exportDiary() {
+  const data = loadData();
+  const days = Object.keys(data).sort();
+  if (days.length === 0) { alert("No entries yet."); return; }
+  let text = "FOOD & SYMPTOM DIARY — ALLERGIST SUMMARY\nPatient: Dale Iannuzzi\n" + "=".repeat(50) + "\n\n";
+  days.forEach(day => {
+    text += formatDate(day) + "\n" + "-".repeat(30) + "\n";
+    ["Breakfast","Lunch","MiddaySnack","Dinner","AfterDinner"].forEach(id => {
+      if (data[day][id]) {
+        const items = getItems(data[day][id]);
+        text += FIELD_LABELS[id] + ": " + data[day][id];
+        if (items.length) text += " ⚠ [HIGH HISTAMINE: " + items.join(", ") + "]";
+        text += "\n";
+      }
+    });
+    if (data[day].Symptoms) text += "Symptoms: " + data[day].Symptoms + "\n";
+    text += "\n";
+  });
+  const blob = new Blob([text], {type:"text/plain"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "food-diary-dale.txt";
+  a.click();
+}
+
+renderMonthSelector();
+renderDaySelector();
+renderSummary();
+
+// Auto-save on every keystroke
+document.querySelectorAll("textarea").forEach(ta => {
+  ta.addEventListener("input", autoSave);
+});
+</script>
+</body>
+</html>
