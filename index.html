@@ -428,6 +428,58 @@ function exportDiary() {
   a.click();
 }
 
+// Pre-load existing diary data
+function preloadData() {
+  const existing = loadData();
+  const hasData = Object.keys(existing).some(day => {
+    const d = existing[day];
+    return ["Breakfast","Lunch","MiddaySnack","Dinner","AfterDinner","Symptoms"].some(f => d[f] && d[f].trim());
+  });
+  if (hasData) return; // don't overwrite if data already exists
+
+  const preloaded = {
+    "2026-06-03": {
+      Breakfast: "Nothing",
+      Lunch: "Canned tuna mixed with avocado mayonnaise on toasted challah bread with butter",
+      MiddaySnack: "Nature Valley peanut butter oat bar",
+      Dinner: "Roast porchetta sandwich with shredded/pickled cabbage, sriracha mayonnaise on brioche bun",
+      AfterDinner: "Tim Hortons ice cap - milk, chocolate syrup and crushed ice",
+      Symptoms: "No symptoms"
+    },
+    "2026-06-04": {
+      Breakfast: "Nothing",
+      Dinner: "10oz salmon marinated in avocado oil, bulgogi sauce, salt and pepper. Green leaf salad with avocado oil, apple cider vinegar, lemon juice - air fried.",
+      Symptoms: ""
+    },
+    "2026-06-05": {
+      Breakfast: "Nothing",
+      Lunch: "Two cans sardines",
+      MiddaySnack: "Nature Valley chocolate oat bars",
+      Dinner: "Two chicken thighs marinated in avocado oil, salt and pepper, lemon butter sauce. Green leaf salad with avocado oil, apple cider vinegar, lemon juice - air fried.",
+      AfterDinner: "Nature Valley almond oat bar",
+      Symptoms: "6:30pm - ate dinner\n\n9:45pm - went to bed\n\n12:00am - woke up, throat tightening, rash starting to spread, mid difficulty swallowing\n\n12:15am - called 911\n\n1:00am - at hospital\n\n2:45am - saw doctor, given 1 Prednisone + 1 Reactine\n\n3:15am - home, rash starting to settle down"
+    },
+    "2026-06-06": {
+      Breakfast: "Breakfast sandwich with fried egg peameal bacon and American cheese on a brioche bun",
+      Lunch: "Barbecued brisket sandwich with shredded cabbage and a side Caesar salad with Caesar dressing, croutons, and bacon bits",
+      Dinner: "3 scrambled eggs, 2 pieces challah bread toasted with butter",
+      AfterDinner: "Crunchy Nature Valley apple crisp oat bars, sweet mint & fennel tea",
+      Symptoms: "7AM took a Prednisone and one Claritin tablet\n\n9:30AM golfed - around the 15th hole maybe about 12:30-1PM had a mild anxiety attack, arms started getting itchy, took a Benadryl, did some breathing exercises and calmed down. Rash broke up a little bit but settled down.\n\n2:45PM took a Benadryl\n\n4:30PM took another Benadryl\n\n9:45PM took another Benadryl\n\n10:30PM going to bed, took a Benadryl to carry through overnight"
+    },
+    "2026-06-07": {
+      Breakfast: "Fried egg, two pieces of bacon, American cheese on a brioche bun",
+      Lunch: "Half rack barbecue ribs, side of mac & cheese, side of half corn on the cob buttered, two Coke Zero",
+      MiddaySnack: "Tim Hortons apple fritter",
+      Dinner: "Fried egg sandwich on challah bread buttered, sweet mint & fennel tea",
+      AfterDinner: "Crunchy Nature Valley apple crisp oat bars",
+      Symptoms: "7:00AM took a Prednisone and one Reactine pill\n\n6:00PM took a Benadryl pill\n\n11:00PM took another Benadryl pill\n\nNo hive symptoms today"
+    }
+  };
+
+  saveData(preloaded);
+}
+
+preloadData();
 renderMonthSelector();
 renderDaySelector();
 renderSummary();
