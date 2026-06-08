@@ -338,6 +338,8 @@ function loadDay() {
     if (el) {
       el.value = day[id] || "";
       if (id !== "Symptoms") checkHistamine(id);
+      // Attach save on blur (when field loses focus)
+      el.onblur = autoSave;
     }
   });
   renderDaySelector();
