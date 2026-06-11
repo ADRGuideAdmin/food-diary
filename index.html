@@ -345,7 +345,7 @@ function loadDay() {
     const el = document.getElementById("field_" + id);
     if (el) {
       el.value = day[id] || "";
-      if (id !== "Symptoms") checkHistamine(id);
+      if (id !== "Symptoms" && id !== "Drugs") checkHistamine(id);
       // Attach save on blur (when field loses focus)
       el.onblur = autoSave;
     }
@@ -408,7 +408,7 @@ function clearData() {
     localStorage.removeItem("foodDiary");
     FIELDS.forEach(id => {
       const el = document.getElementById("field_" + id);
-      if (el) { el.value = ""; if (id !== "Symptoms") checkHistamine(id); }
+      if (el) { el.value = ""; if (id !== "Symptoms" && id !== "Drugs") checkHistamine(id); }
     });
     renderDaySelector();
     renderSummary();
