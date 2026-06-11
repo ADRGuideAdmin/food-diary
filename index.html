@@ -443,7 +443,7 @@ function exportDiary() {
 
 // Pre-load existing diary data
 function preloadData() {
-  if (localStorage.getItem("foodDiaryPreloaded") === "v3") return;
+  if (localStorage.getItem("foodDiaryPreloaded") === "v4") return;
   
   const preloaded = {
     "2026-06-03": {
@@ -511,12 +511,20 @@ function preloadData() {
     }
   };
 
-  // Merge: preloaded fills gaps, existing data always wins
+  // Field-level merge: for each day, existing non-empty fields win, empty fields fall back to preloaded
   const existing = loadData();
   const merged = { ...preloaded };
-  Object.keys(existing).forEach(day => { merged[day] = existing[day]; });
+  Object.keys(existing).forEach(day => {
+    if (!merged[day]) { merged[day] = existing[day]; return; }
+    // Merge field by field — existing wins only if non-empty
+    Object.keys(existing[day]).forEach(field => {
+      if (existing[day][field] && existing[day][field].trim()) {
+        merged[day][field] = existing[day][field];
+      }
+    });
+  });
   saveData(merged);
-  localStorage.setItem("foodDiaryPreloaded", "v3");
+  localStorage.setItem("foodDiaryPreloaded", "v4");
 }
 
 preloadData();
