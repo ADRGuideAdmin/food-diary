@@ -141,10 +141,16 @@ textarea.flagged { border-color: rgba(224,122,95,0.5); }
   </div>
 </div>
 
+<!-- DRUGS TAKEN -->
+<div class="meal-block">
+  <label class="symptoms-label" style="color: #7eb8a4;">Drugs Taken</label>
+  <textarea id="field_Drugs" rows="2" placeholder="Medications, supplements, vitamins taken today..."></textarea>
+</div>
+
 <!-- SYMPTOMS -->
 <div class="meal-block">
   <label class="symptoms-label">Symptoms / Notes</label>
-  <textarea id="field_Symptoms" rows="3" placeholder="Any hives, throat tightening, itching, anxiety, rash location, medications taken..."></textarea>
+  <textarea id="field_Symptoms" rows="3" placeholder="Any hives, throat tightening, itching, anxiety, rash location..."></textarea>
 </div>
 
 
@@ -156,10 +162,10 @@ textarea.flagged { border-color: rgba(224,122,95,0.5); }
 <div class="footer">Dale Iannuzzi — Food &amp; Symptom Diary</div>
 
 <script>
-const FIELDS = ["Breakfast","Lunch","MiddaySnack","Dinner","AfterDinner","Symptoms"];
+const FIELDS = ["Breakfast","Lunch","MiddaySnack","Dinner","AfterDinner","Drugs","Symptoms"];
 const FIELD_LABELS = {
   Breakfast: "Breakfast", Lunch: "Lunch", MiddaySnack: "Midday Snack",
-  Dinner: "Dinner", AfterDinner: "After Dinner Snack", Symptoms: "Symptoms"
+  Dinner: "Dinner", AfterDinner: "After Dinner Snack", Drugs: "Drugs Taken", Symptoms: "Symptoms"
 };
 
 const HIGH_HISTAMINE = [
@@ -378,7 +384,8 @@ function renderSummary() {
     const mealIds = ["Breakfast","Lunch","MiddaySnack","Dinner","AfterDinner"];
     const hasMeals = mealIds.some(id => data[day][id] && data[day][id].trim());
     const hasSymptoms = data[day].Symptoms && data[day].Symptoms.trim();
-    if (!hasMeals && !hasSymptoms) return; // skip empty days
+    const hasDrugs = data[day].Drugs && data[day].Drugs.trim();
+    if (!hasMeals && !hasSymptoms && !hasDrugs) return;
     hasAnyContent = true;
     html += '<div class="summary-day"><div class="summary-date">' + formatDate(day) + '</div>';
     mealIds.forEach(id => {
@@ -388,6 +395,7 @@ function renderSummary() {
         html += '<span class="' + (flagged ? 'flagged-text' : '') + '">' + data[day][id] + '</span></div>';
       }
     });
+    if (hasDrugs) html += '<div class="summary-symptom" style="color:#7eb8a4;">💊 ' + data[day].Drugs + '</div>';
     if (hasSymptoms) html += '<div class="summary-symptom">⚡ ' + data[day].Symptoms + '</div>';
     html += '</div>';
   });
@@ -422,6 +430,7 @@ function exportDiary() {
         text += "\n";
       }
     });
+    if (data[day].Drugs) text += "Drugs Taken: " + data[day].Drugs + "\n";
     if (data[day].Symptoms) text += "Symptoms: " + data[day].Symptoms + "\n";
     text += "\n";
   });
@@ -434,7 +443,7 @@ function exportDiary() {
 
 // Pre-load existing diary data
 function preloadData() {
-  if (localStorage.getItem("foodDiaryPreloaded")) return; // already preloaded
+  if (localStorage.getItem("foodDiaryPreloaded") === "v3") return;
   
   const preloaded = {
     "2026-06-03": {
@@ -472,11 +481,42 @@ function preloadData() {
       Dinner: "Fried egg sandwich on challah bread buttered, sweet mint & fennel tea",
       AfterDinner: "Crunchy Nature Valley apple crisp oat bars",
       Symptoms: "7:00AM took a Prednisone and one Reactine pill\n\n6:00PM took a Benadryl pill\n\n11:00PM took another Benadryl pill\n\nNo hive symptoms today"
+    },
+    "2026-06-08": {
+      Breakfast: "Nature Valley chocolate oat bar",
+      Lunch: "Shawarma chicken wrap with lettuce, cucumber, onions, parsley, hummus, tahini, and a little bit of hot sauce",
+      Dinner: "8oz salmon fillet with salt & pepper, onion powder, garlic powder, side of chicken chow mein",
+      AfterDinner: "1 cup black tea with milk / monk fruit sugar, 1 Nature Valley peanut butter oat bar",
+      Symptoms: "Breakfast - 1 Prednisone + 1 Reactine, 1 each D3, MSM, NAC, OsteoMove\n\nWoke up feeling a bit anxious, nerve tingling firing all over body, anxiety a little high today\n\n10:15pm - 1 Benadryl, 1 stool softener, 1 Magnesium Citrate"
+    },
+    "2026-06-09": {
+      Breakfast: "2 pcs toast with butter",
+      Lunch: "Fried egg sandwich with bacon, lettuce, tomato, Swiss cheese, onion. Chicken nuggets with sweet spicy honey sauce",
+      MiddaySnack: "Chicken bites with sweet honey glaze",
+      Dinner: "Meatloaf with side of chicken chow mein",
+      AfterDinner: "Nature Valley apple crisp oat bar, 1 cup black tea with monk fruit sugar",
+      Symptoms: "Breakfast - 1 Prednisone + 1 Reactine\n\nLunchtime - 1 each D3, MSM, NAC, OsteoMove\n\nNo anxiety feelings today\n\nSore right testicle - strange random pressure/pulsing\n\n10:15pm - 1 Benadryl, 1 stool softener, 1 Magnesium Citrate"
+    },
+    "2026-06-10": {
+      Breakfast: "Cobb salad with bacon, tomato, avocado, blue cheese, oil, vinegar, grilled chicken",
+      Lunch: "Sweet potato, cantaloupe, strawberry, honeydew",
+      Symptoms: ""
+    },
+    "2026-06-11": {
+      Breakfast: "2pc toast with butter, two hard boiled eggs",
+      MiddaySnack: "Small bag salt and vinegar chips",
+      Dinner: "Cobb salad with lettuce, bacon bits, avocado, blue cheese, tomatoes, hard boiled egg",
+      AfterDinner: "8oz chicken bites with hot honey sauce",
+      Symptoms: "One Prednisone, one Reactine\n\nNo symptoms of allergy or nerve firing up until after dinner (very mild) - took a Benadryl"
     }
   };
 
-  saveData(preloaded);
-  localStorage.setItem("foodDiaryPreloaded", "true");
+  // Merge: preloaded fills gaps, existing data always wins
+  const existing = loadData();
+  const merged = { ...preloaded };
+  Object.keys(existing).forEach(day => { merged[day] = existing[day]; });
+  saveData(merged);
+  localStorage.setItem("foodDiaryPreloaded", "v3");
 }
 
 preloadData();
