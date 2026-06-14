@@ -210,17 +210,30 @@ function showSuggestions(fieldId) {
   const ta = document.getElementById("field_"+fieldId);
   const sug = document.getElementById("sug_"+fieldId);
   const query = ta.value.toLowerCase().trim();
-  if(!query){ sug.style.display="none"; return; }
-  const matches = getAllSuggestions(fieldId).filter(s => s.toLowerCase().includes(query) && s.toLowerCase() !== query);
+  const all = getAllSuggestions(fieldId);
+  // If empty field, show all suggestions for Drugs and Symptoms
+  let matches;
+  if(!query) {
+    if(fieldId === "Drugs" || fieldId === "Symptoms") {
+      matches = all;
+    } else {
+      sug.style.display="none"; return;
+    }
+  } else {
+    matches = all.filter(s => s.toLowerCase().includes(query) && s.toLowerCase() !== query);
+  }
   if(!matches.length){ sug.style.display="none"; return; }
   sug.innerHTML = "";
   matches.slice(0,6).forEach(match => {
     const div = document.createElement("div");
     div.className = "suggestion-item";
-    // Highlight matching text
-    const idx = match.toLowerCase().indexOf(query);
-    if(idx >= 0){
-      div.innerHTML = match.substring(0,idx) + '<span class="suggestion-match">' + match.substring(idx,idx+query.length) + '</span>' + match.substring(idx+query.length);
+    if(query) {
+      const idx = match.toLowerCase().indexOf(query);
+      if(idx >= 0){
+        div.innerHTML = match.substring(0,idx) + '<span class="suggestion-match">' + match.substring(idx,idx+query.length) + '</span>' + match.substring(idx+query.length);
+      } else {
+        div.textContent = match;
+      }
     } else {
       div.textContent = match;
     }
@@ -285,7 +298,7 @@ ALL_FIELDS.forEach(id => {
     showSuggestions(id);
   });
   ta.addEventListener("blur", () => hideSuggestions(id));
-  ta.addEventListener("focus", () => { if(ta.value) showSuggestions(id); });
+  ta.addEventListener("focus", () => { showSuggestions(id); });
 });
 
 function loadAll(){ try{ return JSON.parse(localStorage.getItem("fd2")||"{}"); }catch(e){ return {}; } }
@@ -439,3 +452,4 @@ renderSummary();
 </script>
 </body>
 </html>
+
