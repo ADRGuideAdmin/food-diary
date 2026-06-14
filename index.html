@@ -9,273 +9,239 @@
 <title>Food Diary</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  background: linear-gradient(135deg, #0f1923 0%, #1a2a3a 50%, #0f1923 100%);
-  min-height: 100vh;
-  font-family: Georgia, serif;
-  color: #e8dcc8;
-  padding: 20px 16px 60px;
-}
-.header { text-align: center; margin-bottom: 20px; padding-top: 8px; }
-.header-sub { font-size: 10px; letter-spacing: 4px; color: #7eb8a4; text-transform: uppercase; margin-bottom: 8px; }
+body { background: linear-gradient(135deg, #0f1923 0%, #1a2a3a 50%, #0f1923 100%); min-height: 100vh; font-family: Georgia, serif; color: #e8dcc8; padding: 16px 16px 60px; }
+.header { text-align: center; margin-bottom: 16px; padding-top: 8px; }
+.header-sub { font-size: 10px; letter-spacing: 4px; color: #7eb8a4; text-transform: uppercase; margin-bottom: 6px; }
 h1 { font-size: 24px; font-weight: normal; color: #e8dcc8; letter-spacing: 1px; }
-.divider { width: 60px; height: 2px; background: linear-gradient(90deg, #7eb8a4, #c4956a); margin: 10px auto 0; }
-
+.divider { width: 60px; height: 2px; background: linear-gradient(90deg, #7eb8a4, #c4956a); margin: 8px auto 0; }
 .month-selector { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 8px; scrollbar-width: none; }
 .month-selector::-webkit-scrollbar { display: none; }
-.month-btn { padding: 8px 14px; border-radius: 8px; border: 1px solid #2a3f50; background: rgba(255,255,255,0.03); color: #8a9aaa; font-size: 11px; cursor: pointer; white-space: nowrap; font-family: Georgia, serif; flex-shrink: 0; letter-spacing: 1px; }
+.month-btn { padding: 7px 12px; border-radius: 8px; border: 1px solid #2a3f50; background: rgba(255,255,255,0.03); color: #8a9aaa; font-size: 11px; cursor: pointer; white-space: nowrap; font-family: Georgia, serif; flex-shrink: 0; letter-spacing: 1px; }
 .month-btn.active { border-color: #c4956a; background: rgba(196,149,106,0.15); color: #c4956a; }
-.day-selector { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 16px; scrollbar-width: none; }
+.day-selector { display: flex; gap: 5px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 14px; scrollbar-width: none; }
 .day-selector::-webkit-scrollbar { display: none; }
-.day-btn { padding: 8px 12px; border-radius: 8px; border: 1px solid #2a3f50; background: rgba(255,255,255,0.03); color: #8a9aaa; font-size: 12px; cursor: pointer; white-space: nowrap; font-family: Georgia, serif; flex-shrink: 0; position: relative; }
+.day-btn { padding: 7px 10px; border-radius: 8px; border: 1px solid #2a3f50; background: rgba(255,255,255,0.03); color: #8a9aaa; font-size: 11px; cursor: pointer; white-space: nowrap; font-family: Georgia, serif; flex-shrink: 0; position: relative; }
 .day-btn.active { border-color: #7eb8a4; background: rgba(126,184,164,0.15); color: #7eb8a4; }
-.day-btn.future { opacity: 0.3; cursor: default; }
-.dot { position: absolute; top: 4px; right: 4px; width: 5px; height: 5px; border-radius: 50%; background: #7eb8a4; }
-.date-label { font-size: 12px; color: #c4956a; letter-spacing: 2px; margin-bottom: 16px; text-transform: uppercase; }
-.meal-block { margin-bottom: 14px; }
-.meal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.day-btn.future { opacity: 0.3; cursor: default; pointer-events: none; }
+.day-btn.has-data::after { content: ''; position: absolute; top: 3px; right: 3px; width: 5px; height: 5px; border-radius: 50%; background: #7eb8a4; }
+.date-label { font-size: 12px; color: #c4956a; letter-spacing: 2px; margin-bottom: 14px; text-transform: uppercase; }
+.meal-block { margin-bottom: 12px; }
+.meal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
 .meal-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #7eb8a4; }
 .histamine-badge { font-size: 9px; color: #e07a5f; background: rgba(224,122,95,0.15); padding: 2px 8px; border-radius: 10px; letter-spacing: 1px; display: none; }
 .histamine-badge.show { display: block; }
 textarea { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid #2a3f50; border-radius: 10px; padding: 10px 14px; color: #e8dcc8; font-size: 15px; font-family: Georgia, serif; resize: none; outline: none; caret-color: white; -webkit-appearance: none; }
 textarea::placeholder { color: #4a6070; }
 textarea.flagged { border-color: rgba(224,122,95,0.5); }
-.histamine-box { margin-top: 8px; padding: 10px 14px; background: rgba(224,122,95,0.08); border: 1px solid rgba(224,122,95,0.3); border-radius: 10px; display: none; }
+.histamine-box { margin-top: 6px; padding: 8px 12px; background: rgba(224,122,95,0.08); border: 1px solid rgba(224,122,95,0.3); border-radius: 10px; display: none; }
 .histamine-box.show { display: block; }
-.histamine-box-title { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #e07a5f; margin-bottom: 6px; }
-.histamine-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.histamine-tag { font-size: 12px; color: #e8dcc8; background: rgba(224,122,95,0.2); padding: 3px 10px; border-radius: 20px; text-transform: capitalize; font-family: Georgia, serif; }
-.symptoms-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #c4956a; margin-bottom: 6px; display: block; }
-.btn-save { width: 100%; padding: 14px; background: linear-gradient(135deg, #7eb8a4, #5a9e8a); border: none; border-radius: 10px; color: #0f1923; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-family: Georgia, serif; cursor: pointer; margin-bottom: 10px; }
-.btn-save { width: 100%; padding: 14px; background: linear-gradient(135deg, #7eb8a4, #5a9e8a); border: none; border-radius: 10px; color: #0f1923; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-family: Georgia, serif; cursor: pointer; margin-bottom: 10px; }
+.histamine-box-title { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #e07a5f; margin-bottom: 5px; }
+.histamine-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.histamine-tag { font-size: 12px; color: #e8dcc8; background: rgba(224,122,95,0.2); padding: 2px 8px; border-radius: 20px; text-transform: capitalize; font-family: Georgia, serif; }
+.field-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px; display: block; }
+.field-label.teal { color: #7eb8a4; }
+.field-label.gold { color: #c4956a; }
+.field-label.red { color: #e07a5f; }
+.btn-save { width: 100%; padding: 14px; background: linear-gradient(135deg, #7eb8a4, #5a9e8a); border: none; border-radius: 10px; color: #0f1923; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-family: Georgia, serif; cursor: pointer; margin-bottom: 10px; font-weight: bold; }
 .btn-export { width: 100%; padding: 12px; background: transparent; border: 1px solid #c4956a; border-radius: 10px; color: #c4956a; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-family: Georgia, serif; cursor: pointer; margin-bottom: 10px; }
 .btn-clear { width: 100%; padding: 10px; background: transparent; border: 1px solid rgba(224,122,95,0.25); border-radius: 10px; color: rgba(224,122,95,0.5); font-size: 9px; letter-spacing: 3px; text-transform: uppercase; font-family: Georgia, serif; cursor: pointer; margin-bottom: 24px; }
+.save-msg { text-align: center; color: #7eb8a4; font-size: 12px; letter-spacing: 2px; margin-bottom: 10px; min-height: 18px; }
 .summary-box { background: rgba(255,255,255,0.03); border: 1px solid #2a3f50; border-radius: 12px; padding: 16px; margin-bottom: 20px; }
 .summary-title { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #7eb8a4; margin-bottom: 12px; }
 .summary-day { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #1a2a3a; }
 .summary-day:last-child { border-bottom: none; margin-bottom: 0; }
-.summary-date { font-size: 11px; color: #c4956a; margin-bottom: 4px; }
-.summary-meal { font-size: 12px; color: #8a9aaa; margin-bottom: 2px; }
-.summary-meal .lbl { color: #7eb8a4; }
-.summary-meal .flagged-text { color: #e07a5f; }
-.summary-symptom { font-size: 11px; color: #c4956a; margin-top: 4px; }
+.summary-date { font-size: 11px; color: #c4956a; margin-bottom: 4px; font-weight: bold; }
+.summary-line { font-size: 12px; color: #8a9aaa; margin-bottom: 2px; }
+.summary-line .lbl { color: #7eb8a4; }
+.summary-line .flagged { color: #e07a5f; }
+.summary-drugs { font-size: 12px; color: #7eb8a4; margin-top: 3px; }
+.summary-symptoms { font-size: 12px; color: #c4956a; margin-top: 3px; }
 .footer { text-align: center; font-size: 10px; color: #3a5060; letter-spacing: 1px; margin-top: 10px; }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="header-sub">Allergist Appointment — June 12</div>
+  <div class="header-sub">Allergist Diary</div>
   <h1>Food &amp; Symptom Diary</h1>
   <div class="divider"></div>
 </div>
-
-
 
 <div class="month-selector" id="monthSelector"></div>
 <div class="day-selector" id="daySelector"></div>
 <div class="date-label" id="dateLabel"></div>
 
-<!-- BREAKFAST -->
 <div class="meal-block">
-  <div class="meal-header">
-    <div class="meal-label">Breakfast</div>
-    <div class="histamine-badge" id="badge_Breakfast">⚠ HIGH HISTAMINE</div>
-  </div>
-  <textarea id="field_Breakfast" rows="2" placeholder="What did you have for breakfast?" oninput="checkHistamine('Breakfast')"></textarea>
-  <div class="histamine-box" id="box_Breakfast">
-    <div class="histamine-box-title">High Histamine Items Detected</div>
-    <div class="histamine-tags" id="tags_Breakfast"></div>
-  </div>
+  <div class="meal-header"><span class="meal-label">Breakfast</span><span class="histamine-badge" id="badge_Breakfast">⚠ HIGH HISTAMINE</span></div>
+  <textarea id="field_Breakfast" rows="2" placeholder="What did you have for breakfast?"></textarea>
+  <div class="histamine-box" id="box_Breakfast"><div class="histamine-box-title">High Histamine Items Detected</div><div class="histamine-tags" id="tags_Breakfast"></div></div>
 </div>
 
-<!-- LUNCH -->
 <div class="meal-block">
-  <div class="meal-header">
-    <div class="meal-label">Lunch</div>
-    <div class="histamine-badge" id="badge_Lunch">⚠ HIGH HISTAMINE</div>
-  </div>
-  <textarea id="field_Lunch" rows="2" placeholder="What did you have for lunch?" oninput="checkHistamine('Lunch')"></textarea>
-  <div class="histamine-box" id="box_Lunch">
-    <div class="histamine-box-title">High Histamine Items Detected</div>
-    <div class="histamine-tags" id="tags_Lunch"></div>
-  </div>
+  <div class="meal-header"><span class="meal-label">Lunch</span><span class="histamine-badge" id="badge_Lunch">⚠ HIGH HISTAMINE</span></div>
+  <textarea id="field_Lunch" rows="2" placeholder="What did you have for lunch?"></textarea>
+  <div class="histamine-box" id="box_Lunch"><div class="histamine-box-title">High Histamine Items Detected</div><div class="histamine-tags" id="tags_Lunch"></div></div>
 </div>
 
-<!-- MIDDAY SNACK -->
 <div class="meal-block">
-  <div class="meal-header">
-    <div class="meal-label">Midday Snack</div>
-    <div class="histamine-badge" id="badge_MiddaySnack">⚠ HIGH HISTAMINE</div>
-  </div>
-  <textarea id="field_MiddaySnack" rows="2" placeholder="What did you have for a midday snack?" oninput="checkHistamine('MiddaySnack')"></textarea>
-  <div class="histamine-box" id="box_MiddaySnack">
-    <div class="histamine-box-title">High Histamine Items Detected</div>
-    <div class="histamine-tags" id="tags_MiddaySnack"></div>
-  </div>
+  <div class="meal-header"><span class="meal-label">Midday Snack</span><span class="histamine-badge" id="badge_MiddaySnack">⚠ HIGH HISTAMINE</span></div>
+  <textarea id="field_MiddaySnack" rows="2" placeholder="What did you have for a midday snack?"></textarea>
+  <div class="histamine-box" id="box_MiddaySnack"><div class="histamine-box-title">High Histamine Items Detected</div><div class="histamine-tags" id="tags_MiddaySnack"></div></div>
 </div>
 
-<!-- DINNER -->
 <div class="meal-block">
-  <div class="meal-header">
-    <div class="meal-label">Dinner</div>
-    <div class="histamine-badge" id="badge_Dinner">⚠ HIGH HISTAMINE</div>
-  </div>
-  <textarea id="field_Dinner" rows="2" placeholder="What did you have for dinner?" oninput="checkHistamine('Dinner')"></textarea>
-  <div class="histamine-box" id="box_Dinner">
-    <div class="histamine-box-title">High Histamine Items Detected</div>
-    <div class="histamine-tags" id="tags_Dinner"></div>
-  </div>
+  <div class="meal-header"><span class="meal-label">Dinner</span><span class="histamine-badge" id="badge_Dinner">⚠ HIGH HISTAMINE</span></div>
+  <textarea id="field_Dinner" rows="2" placeholder="What did you have for dinner?"></textarea>
+  <div class="histamine-box" id="box_Dinner"><div class="histamine-box-title">High Histamine Items Detected</div><div class="histamine-tags" id="tags_Dinner"></div></div>
 </div>
 
-<!-- AFTER DINNER SNACK -->
 <div class="meal-block">
-  <div class="meal-header">
-    <div class="meal-label">After Dinner Snack</div>
-    <div class="histamine-badge" id="badge_AfterDinner">⚠ HIGH HISTAMINE</div>
-  </div>
-  <textarea id="field_AfterDinner" rows="2" placeholder="What did you have after dinner?" oninput="checkHistamine('AfterDinner')"></textarea>
-  <div class="histamine-box" id="box_AfterDinner">
-    <div class="histamine-box-title">High Histamine Items Detected</div>
-    <div class="histamine-tags" id="tags_AfterDinner"></div>
-  </div>
+  <div class="meal-header"><span class="meal-label">After Dinner Snack</span><span class="histamine-badge" id="badge_AfterDinner">⚠ HIGH HISTAMINE</span></div>
+  <textarea id="field_AfterDinner" rows="2" placeholder="What did you have after dinner?"></textarea>
+  <div class="histamine-box" id="box_AfterDinner"><div class="histamine-box-title">High Histamine Items Detected</div><div class="histamine-tags" id="tags_AfterDinner"></div></div>
 </div>
 
-<!-- DRUGS TAKEN -->
 <div class="meal-block">
-  <label class="symptoms-label" style="color: #7eb8a4;">Drugs Taken</label>
+  <label class="field-label teal">Drugs Taken</label>
   <textarea id="field_Drugs" rows="2" placeholder="Medications, supplements, vitamins taken today..."></textarea>
 </div>
 
-<!-- SYMPTOMS -->
 <div class="meal-block">
-  <label class="symptoms-label">Symptoms / Notes</label>
+  <label class="field-label gold">Symptoms / Notes</label>
   <textarea id="field_Symptoms" rows="3" placeholder="Any hives, throat tightening, itching, anxiety, rash location..."></textarea>
 </div>
 
-
-<button class="btn-save" id="saveBtn" onclick="saveEntry()">Save Today's Entries</button>
+<div class="save-msg" id="saveMsg"></div>
+<button class="btn-save" onclick="saveDay()">Save Day's Entries</button>
 <button class="btn-export" onclick="exportDiary()">Export for Allergist</button>
-<button class="btn-clear" onclick="clearData()">Clear All Data</button>
+<button class="btn-clear" onclick="clearAll()">Clear All Data</button>
 
 <div id="summarySection"></div>
 <div class="footer">Dale Iannuzzi — Food &amp; Symptom Diary</div>
 
 <script>
-const FIELDS = ["Breakfast","Lunch","MiddaySnack","Dinner","AfterDinner","Drugs","Symptoms"];
-const FIELD_LABELS = {
-  Breakfast: "Breakfast", Lunch: "Lunch", MiddaySnack: "Midday Snack",
-  Dinner: "Dinner", AfterDinner: "After Dinner Snack", Drugs: "Drugs Taken", Symptoms: "Symptoms"
-};
+const MEAL_FIELDS = ["Breakfast","Lunch","MiddaySnack","Dinner","AfterDinner"];
+const ALL_FIELDS = ["Breakfast","Lunch","MiddaySnack","Dinner","AfterDinner","Drugs","Symptoms"];
+const LABELS = { Breakfast:"Breakfast", Lunch:"Lunch", MiddaySnack:"Midday Snack", Dinner:"Dinner", AfterDinner:"After Dinner Snack", Drugs:"Drugs Taken", Symptoms:"Symptoms/Notes" };
 
-const HIGH_HISTAMINE = [
-  "sardines","tuna","canned fish","salami","pepperoni","bacon","smoked",
-  "tomato","avocado","spinach","eggplant","banana","strawberry","citrus",
-  "lemon","orange","pineapple","alcohol","wine","beer","vinegar","soy sauce",
-  "ketchup","bbq sauce","parmesan","cheddar","aged cheese","cheese","yogurt",
-  "fermented","leftover","mayonnaise","hot dog","sausage","processed meat",
-  "pickles","mustard","worcestershire","anchovies"
-];
+const HIGH_HISTAMINE = ["sardines","tuna","canned fish","salami","pepperoni","bacon","smoked","tomato","avocado","spinach","eggplant","banana","strawberry","citrus","lemon","orange","pineapple","alcohol","wine","beer","vinegar","soy sauce","ketchup","bbq sauce","parmesan","cheddar","aged cheese","cheese","yogurt","fermented","leftover","mayonnaise","hot dog","sausage","processed meat","pickles","mustard","worcestershire","anchovies"];
 
-function getItems(text) {
-  const lower = text.toLowerCase();
-  return HIGH_HISTAMINE.filter(f => lower.includes(f));
+const START_YEAR = 2026;
+const START_MONTH = 5; // May = 5
+const START_DAY = 31;
+const TODAY = "2026-06-14";
+
+function pad(n){ return String(n).padStart(2,"0"); }
+
+function getTodayKey(){ return TODAY; }
+
+function formatDate(d){
+  return new Date(d+"T12:00:00").toLocaleDateString("en-CA",{weekday:"long",month:"long",day:"numeric"});
 }
 
-function checkHistamine(id) {
-  const val = document.getElementById("field_" + id).value;
-  const items = getItems(val);
-  const flagged = items.length > 0;
-  document.getElementById("field_" + id).className = flagged ? "flagged" : "";
-  document.getElementById("badge_" + id).className = "histamine-badge" + (flagged ? " show" : "");
-  document.getElementById("box_" + id).className = "histamine-box" + (flagged ? " show" : "");
-  const tags = document.getElementById("tags_" + id);
-  tags.innerHTML = "";
-  items.forEach(item => {
-    const span = document.createElement("span");
-    span.className = "histamine-tag";
-    span.textContent = item;
-    tags.appendChild(span);
-  });
-}
-
-function getTodayKey() {
-  return new Date().toISOString().split("T")[0];
-}
-
-function formatDate(d) {
-  return new Date(d + "T12:00:00").toLocaleDateString("en-CA", { weekday: "long", month: "long", day: "numeric" });
-}
-
-function formatShort(d) {
-  if (d === getTodayKey()) return "Today";
-  return new Date(d + "T12:00:00").toLocaleDateString("en-CA", { weekday: "short", day: "numeric" });
-}
-
-function loadData() {
-  try { return JSON.parse(localStorage.getItem("foodDiary") || "{}"); } catch(e) { return {}; }
-}
-
-function saveData(d) { localStorage.setItem("foodDiary", JSON.stringify(d)); }
-
-let activeDate = getTodayKey();
-
-const START_DATE = "2026-05-31";
-let activeMonth = getTodayKey().substring(0, 7); // "2026-06"
-
-function getMonths() {
+function getMonths(){
   const months = [];
-  const start = new Date(START_DATE + "T12:00:00");
-  const today = new Date();
-  let cur = new Date(start.getFullYear(), start.getMonth(), 1);
-  while (cur <= today) {
-    months.push(cur.toISOString().substring(0, 7));
-    cur.setMonth(cur.getMonth() + 1);
+  const [ty,tm] = TODAY.split("-").map(Number);
+  let y = START_YEAR, m = START_MONTH;
+  while(y < ty || (y === ty && m <= tm)){
+    months.push(`${y}-${pad(m)}`);
+    m++; if(m>12){m=1;y++;}
   }
   return months;
 }
 
-function getDaysForMonth(monthKey) {
-  const [year, month] = monthKey.split("-").map(Number);
-  const todayKey = getTodayKey();
+function getDaysForMonth(mk){
+  const [y,m] = mk.split("-").map(Number);
+  const daysInMonth = new Date(y,m,0).getDate();
+  const startD = (mk === "2026-05") ? 31 : 1;
   const days = [];
-  const startDay = (monthKey === "2026-05") ? 31 : 1;
-  const daysInMonth = new Date(year, month, 0).getDate();
-  for (let d = startDay; d <= daysInMonth; d++) {
-    const dateStr = `${year}-${String(month).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-    if (dateStr <= todayKey) days.push(dateStr);
+  for(let d=startD; d<=daysInMonth; d++){
+    days.push(`${y}-${pad(m)}-${pad(d)}`);
   }
   return days;
 }
 
-function formatMonthLabel(monthKey) {
-  const d = new Date(monthKey + "-01T12:00:00");
-  return d.toLocaleDateString("en-CA", { month: "short", year: "numeric" });
+function getHistamineItems(text){
+  const lower = text.toLowerCase();
+  return HIGH_HISTAMINE.filter(f => lower.includes(f));
 }
 
-function formatDayLabel(dateStr) {
-  const d = new Date(dateStr + "T12:00:00");
-  const today = getTodayKey();
-  if (dateStr === today) return "Today";
-  return d.toLocaleDateString("en-CA", { weekday: "short", day: "numeric" });
+function checkHistamine(id){
+  const val = document.getElementById("field_"+id).value;
+  const items = getHistamineItems(val);
+  const flagged = items.length > 0;
+  document.getElementById("field_"+id).className = flagged ? "flagged" : "";
+  document.getElementById("badge_"+id).className = "histamine-badge"+(flagged?" show":"");
+  document.getElementById("box_"+id).className = "histamine-box"+(flagged?" show":"");
+  const tags = document.getElementById("tags_"+id);
+  tags.innerHTML = "";
+  items.forEach(item => {
+    const s = document.createElement("span");
+    s.className = "histamine-tag";
+    s.textContent = item;
+    tags.appendChild(s);
+  });
 }
 
-function renderMonthSelector() {
+// Attach input listeners
+MEAL_FIELDS.forEach(id => {
+  document.getElementById("field_"+id).addEventListener("input", () => checkHistamine(id));
+});
+
+// STORAGE — simple direct localStorage
+function loadAll(){ try{ return JSON.parse(localStorage.getItem("fd2") || "{}"); }catch(e){ return {}; } }
+function saveAll(data){ localStorage.setItem("fd2",JSON.stringify(data)); }
+
+function loadDay(){
+  const data = loadAll();
+  const day = data[activeDate] || {};
+  ALL_FIELDS.forEach(id => {
+    document.getElementById("field_"+id).value = day[id] || "";
+  });
+  MEAL_FIELDS.forEach(id => checkHistamine(id));
+  document.getElementById("saveMsg").textContent = "";
+}
+
+function saveDay(){
+  const data = loadAll();
+  const dayData = {};
+  let hasContent = false;
+  ALL_FIELDS.forEach(id => {
+    const val = document.getElementById("field_"+id).value.trim();
+    dayData[id] = val;
+    if(val) hasContent = true;
+  });
+  if(hasContent){
+    data[activeDate] = dayData;
+  } else {
+    delete data[activeDate];
+  }
+  saveAll(data);
+  const msg = document.getElementById("saveMsg");
+  msg.textContent = "✓ Saved";
+  setTimeout(() => { msg.textContent = ""; }, 3000);
+  renderDaySelector();
+  renderSummary();
+}
+
+let activeMonth = "2026-06";
+let activeDate = TODAY;
+
+function renderMonthSelector(){
   const sel = document.getElementById("monthSelector");
   sel.innerHTML = "";
-  getMonths().forEach(month => {
+  getMonths().forEach(mk => {
     const btn = document.createElement("button");
-    btn.className = "month-btn" + (month === activeMonth ? " active" : "");
-    btn.textContent = formatMonthLabel(month);
+    btn.className = "month-btn"+(mk===activeMonth?" active":"");
+    btn.textContent = new Date(mk+"-01T12:00:00").toLocaleDateString("en-CA",{month:"short",year:"numeric"});
     btn.onclick = () => {
-      autoSave();
-      activeMonth = month;
-      // Set active date to first available day of that month
-      const days = getDaysForMonth(month);
-      if (days.length > 0) {
-        // If today is in this month use today, else last day
-        const today = getTodayKey();
-        activeDate = days.includes(today) ? today : days[days.length - 1];
+      activeMonth = mk;
+      const days = getDaysForMonth(mk);
+      // pick today if in month, else last non-future day
+      if(days.includes(TODAY)) activeDate = TODAY;
+      else {
+        const past = days.filter(d => d <= TODAY);
+        activeDate = past.length ? past[past.length-1] : days[0];
       }
       renderMonthSelector();
       renderDaySelector();
@@ -283,259 +249,137 @@ function renderMonthSelector() {
     };
     sel.appendChild(btn);
   });
-  // Scroll active month into view
-  const active = sel.querySelector(".active");
-  if (active) active.scrollIntoView({ inline: "center", behavior: "smooth" });
 }
 
-function renderDaySelector() {
-  const data = loadData();
+function renderDaySelector(){
+  const data = loadAll();
   const sel = document.getElementById("daySelector");
   sel.innerHTML = "";
   getDaysForMonth(activeMonth).forEach(day => {
+    const d = new Date(day+"T12:00:00");
+    const label = d.toLocaleDateString("en-CA",{weekday:"short",day:"numeric"});
     const btn = document.createElement("button");
-    btn.className = "day-btn" + (day === activeDate ? " active" : "");
-    btn.textContent = formatDayLabel(day);
-    if (data[day] && day !== activeDate) {
-      const dot = document.createElement("span");
-      dot.className = "dot";
-      btn.appendChild(dot);
+    const isFuture = day > TODAY;
+    const isActive = day === activeDate;
+    const hasData = !!data[day];
+    btn.className = "day-btn"+(isActive?" active":"")+(isFuture?" future":"")+(hasData&&!isActive?" has-data":"");
+    btn.textContent = label;
+    if(!isFuture){
+      btn.onclick = () => {
+        activeDate = day;
+        renderDaySelector();
+        loadDay();
+        document.getElementById("dateLabel").textContent = formatDate(day);
+      };
     }
-    btn.onclick = () => {
-      autoSave();
-      activeDate = day;
-      renderDaySelector();
-      loadDay();
-    };
     sel.appendChild(btn);
   });
   document.getElementById("dateLabel").textContent = formatDate(activeDate);
-  // Scroll active day into view
+  // scroll active into view
   const active = sel.querySelector(".active");
-  if (active) active.scrollIntoView({ inline: "center", behavior: "smooth" });
+  if(active) setTimeout(()=>active.scrollIntoView({inline:"center",behavior:"smooth"}),50);
 }
 
-function autoSave() {
-  const data = loadData();
-  const dayData = {};
-  let hasContent = false;
-  FIELDS.forEach(id => {
-    const el = document.getElementById("field_" + id);
-    if (el && el.value.trim()) {
-      dayData[id] = el.value.trim();
-      hasContent = true;
-    }
-  });
-  if (hasContent) {
-    data[activeDate] = dayData;
-    saveData(data);
-  } else {
-    // Remove the date entry if all fields are empty
-    if (data[activeDate]) {
-      delete data[activeDate];
-      saveData(data);
-    }
-  }
-}
-
-function loadDay() {
-  const data = loadData();
-  const day = data[activeDate] || {};
-  FIELDS.forEach(id => {
-    const el = document.getElementById("field_" + id);
-    if (el) {
-      el.value = day[id] || "";
-      if (id !== "Symptoms" && id !== "Drugs") checkHistamine(id);
-      // Attach save on blur (when field loses focus)
-      el.onblur = autoSave;
-    }
-  });
-  renderDaySelector();
-  renderSummary();
-}
-
-function saveEntry() {
-  const data = loadData();
-  if (!data[activeDate]) data[activeDate] = {};
-  FIELDS.forEach(id => {
-    const el = document.getElementById("field_" + id);
-    if (el) data[activeDate][id] = el.value.trim();
-  });
-  saveData(data);
-  const btn = document.getElementById("saveBtn");
-  btn.textContent = "✓ Saved";
-  btn.style.background = "linear-gradient(135deg, #4a9e84, #3a8e74)";
-  setTimeout(() => {
-    btn.textContent = "Save Today's Entries";
-    btn.style.background = "linear-gradient(135deg, #7eb8a4, #5a9e8a)";
-  }, 2000);
-  renderDaySelector();
-  renderSummary();
-}
-
-function renderSummary() {
-  const data = loadData();
+function renderSummary(){
+  const data = loadAll();
   const days = Object.keys(data).sort().reverse();
-  const section = document.getElementById("summarySection");
-  if (days.length === 0) { section.innerHTML = ""; return; }
+  const sec = document.getElementById("summarySection");
+  if(!days.length){ sec.innerHTML=""; return; }
   let html = '<div class="summary-box"><div class="summary-title">Diary Summary</div>';
-  let hasAnyContent = false;
+  let any = false;
   days.forEach(day => {
-    const mealIds = ["Breakfast","Lunch","MiddaySnack","Dinner","AfterDinner"];
-    const hasMeals = mealIds.some(id => data[day][id] && data[day][id].trim());
-    const hasSymptoms = data[day].Symptoms && data[day].Symptoms.trim();
-    const hasDrugs = data[day].Drugs && data[day].Drugs.trim();
-    if (!hasMeals && !hasSymptoms && !hasDrugs) return;
-    hasAnyContent = true;
-    html += '<div class="summary-day"><div class="summary-date">' + formatDate(day) + '</div>';
-    mealIds.forEach(id => {
-      if (data[day][id]) {
-        const flagged = getItems(data[day][id]).length > 0;
-        html += '<div class="summary-meal"><span class="lbl">' + FIELD_LABELS[id] + ': </span>';
-        html += '<span class="' + (flagged ? 'flagged-text' : '') + '">' + data[day][id] + '</span></div>';
+    const d = data[day];
+    const hasMeals = MEAL_FIELDS.some(id => d[id]&&d[id].trim());
+    const hasDrugs = d.Drugs&&d.Drugs.trim();
+    const hasSymptoms = d.Symptoms&&d.Symptoms.trim();
+    if(!hasMeals&&!hasDrugs&&!hasSymptoms) return;
+    any = true;
+    html += '<div class="summary-day"><div class="summary-date">'+formatDate(day)+'</div>';
+    MEAL_FIELDS.forEach(id => {
+      if(d[id]&&d[id].trim()){
+        const flagged = getHistamineItems(d[id]).length>0;
+        html += '<div class="summary-line"><span class="lbl">'+LABELS[id]+': </span><span class="'+(flagged?'flagged':'')+'">'+d[id]+'</span></div>';
       }
     });
-    if (hasDrugs) html += '<div class="summary-symptom" style="color:#7eb8a4;">💊 ' + data[day].Drugs + '</div>';
-    if (hasSymptoms) html += '<div class="summary-symptom">⚡ ' + data[day].Symptoms + '</div>';
+    if(hasDrugs) html += '<div class="summary-drugs">💊 '+d.Drugs+'</div>';
+    if(hasSymptoms) html += '<div class="summary-symptoms">⚡ '+d.Symptoms+'</div>';
     html += '</div>';
   });
   html += '</div>';
-  section.innerHTML = hasAnyContent ? html : "";
+  sec.innerHTML = any ? html : "";
 }
 
-function clearData() {
-  if (confirm("Clear all diary entries? This cannot be undone.")) {
-    localStorage.removeItem("foodDiary");
-    FIELDS.forEach(id => {
-      const el = document.getElementById("field_" + id);
-      if (el) { el.value = ""; if (id !== "Symptoms" && id !== "Drugs") checkHistamine(id); }
+function exportDiary(){
+  const data = loadAll();
+  const days = Object.keys(data).sort();
+  if(!days.length){ alert("No entries yet."); return; }
+  let text = "FOOD & SYMPTOM DIARY — ALLERGIST SUMMARY\nPatient: Dale Iannuzzi\n"+"=".repeat(50)+"\n\n";
+  days.forEach(day => {
+    const d = data[day];
+    text += formatDate(day)+"\n"+"-".repeat(30)+"\n";
+    MEAL_FIELDS.forEach(id => {
+      if(d[id]&&d[id].trim()){
+        const items = getHistamineItems(d[id]);
+        text += LABELS[id]+": "+d[id];
+        if(items.length) text += " ⚠ [HIGH HISTAMINE: "+items.join(", ")+"]";
+        text += "\n";
+      }
     });
+    if(d.Drugs&&d.Drugs.trim()) text += "Drugs Taken: "+d.Drugs+"\n";
+    if(d.Symptoms&&d.Symptoms.trim()) text += "Symptoms: "+d.Symptoms+"\n";
+    text += "\n";
+  });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text],{type:"text/plain"}));
+  a.download = "food-diary-dale.txt";
+  a.click();
+}
+
+function clearAll(){
+  if(confirm("Clear ALL diary data? This cannot be undone.")){
+    localStorage.removeItem("fd2");
+    localStorage.removeItem("fd2_preloaded");
+    ALL_FIELDS.forEach(id => { document.getElementById("field_"+id).value=""; });
+    MEAL_FIELDS.forEach(id => checkHistamine(id));
     renderDaySelector();
     renderSummary();
   }
 }
 
-function exportDiary() {
-  const data = loadData();
-  const days = Object.keys(data).sort();
-  if (days.length === 0) { alert("No entries yet."); return; }
-  let text = "FOOD & SYMPTOM DIARY — ALLERGIST SUMMARY\nPatient: Dale Iannuzzi\n" + "=".repeat(50) + "\n\n";
-  days.forEach(day => {
-    text += formatDate(day) + "\n" + "-".repeat(30) + "\n";
-    ["Breakfast","Lunch","MiddaySnack","Dinner","AfterDinner"].forEach(id => {
-      if (data[day][id]) {
-        const items = getItems(data[day][id]);
-        text += FIELD_LABELS[id] + ": " + data[day][id];
-        if (items.length) text += " ⚠ [HIGH HISTAMINE: " + items.join(", ") + "]";
-        text += "\n";
-      }
-    });
-    if (data[day].Drugs) text += "Drugs Taken: " + data[day].Drugs + "\n";
-    if (data[day].Symptoms) text += "Symptoms: " + data[day].Symptoms + "\n";
-    text += "\n";
-  });
-  const blob = new Blob([text], {type:"text/plain"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "food-diary-dale.txt";
-  a.click();
-}
-
-// Pre-load existing diary data
-function preloadData() {
-  if (localStorage.getItem("foodDiaryPreloaded") === "v4") return;
-  
-  const preloaded = {
-    "2026-06-03": {
-      Breakfast: "Nothing",
-      Lunch: "Canned tuna mixed with avocado mayonnaise on toasted challah bread with butter",
-      MiddaySnack: "Nature Valley peanut butter oat bar",
-      Dinner: "Roast porchetta sandwich with shredded/pickled cabbage, sriracha mayonnaise on brioche bun",
-      AfterDinner: "Tim Hortons ice cap - milk, chocolate syrup and crushed ice",
-      Symptoms: "No symptoms"
-    },
-    "2026-06-04": {
-      Breakfast: "Nothing",
-      Dinner: "10oz salmon marinated in avocado oil, bulgogi sauce, salt and pepper. Green leaf salad with avocado oil, apple cider vinegar, lemon juice - air fried.",
-      Symptoms: ""
-    },
-    "2026-06-05": {
-      Breakfast: "Nothing",
-      Lunch: "Two cans sardines",
-      MiddaySnack: "Nature Valley chocolate oat bars",
-      Dinner: "Two chicken thighs marinated in avocado oil, salt and pepper, lemon butter sauce. Green leaf salad with avocado oil, apple cider vinegar, lemon juice - air fried.",
-      AfterDinner: "Nature Valley almond oat bar",
-      Symptoms: "6:30pm - ate dinner\n\n9:45pm - went to bed\n\n12:00am - woke up, throat tightening, rash starting to spread, mild difficulty swallowing\n\n12:15am - called 911\n\n1:00am - at hospital\n\n2:45am - saw doctor, given 1 Prednisone + 1 Reactine\n\n3:15am - home, rash starting to settle down"
-    },
-    "2026-06-06": {
-      Breakfast: "Breakfast sandwich with fried egg peameal bacon and American cheese on a brioche bun",
-      Lunch: "Barbecued brisket sandwich with shredded cabbage and a side Caesar salad with Caesar dressing, croutons, and bacon bits",
-      Dinner: "3 scrambled eggs, 2 pieces challah bread toasted with butter",
-      AfterDinner: "Crunchy Nature Valley apple crisp oat bars, sweet mint & fennel tea",
-      Symptoms: "7AM took a Prednisone and one Claritin tablet\n\n9:30AM golfed - around the 15th hole had a mild anxiety attack, arms started getting itchy, took a Benadryl, did some breathing exercises and calmed down.\n\n2:45PM took a Benadryl\n\n4:30PM took another Benadryl\n\n9:45PM took another Benadryl\n\n10:30PM going to bed, took a Benadryl overnight"
-    },
-    "2026-06-07": {
-      Breakfast: "Fried egg, two pieces of bacon, American cheese on a brioche bun",
-      Lunch: "Half rack barbecue ribs, side of mac & cheese, side of half corn on the cob buttered, two Coke Zero",
-      MiddaySnack: "Tim Hortons apple fritter",
-      Dinner: "Fried egg sandwich on challah bread buttered, sweet mint & fennel tea",
-      AfterDinner: "Crunchy Nature Valley apple crisp oat bars",
-      Symptoms: "7:00AM took a Prednisone and one Reactine pill\n\n6:00PM took a Benadryl pill\n\n11:00PM took another Benadryl pill\n\nNo hive symptoms today"
-    },
-    "2026-06-08": {
-      Breakfast: "Nature Valley chocolate oat bar",
-      Lunch: "Shawarma chicken wrap with lettuce, cucumber, onions, parsley, hummus, tahini, and a little bit of hot sauce",
-      Dinner: "8oz salmon fillet with salt & pepper, onion powder, garlic powder, side of chicken chow mein",
-      AfterDinner: "1 cup black tea with milk / monk fruit sugar, 1 Nature Valley peanut butter oat bar",
-      Symptoms: "Breakfast - 1 Prednisone + 1 Reactine, 1 each D3, MSM, NAC, OsteoMove\n\nWoke up feeling a bit anxious, nerve tingling firing all over body, anxiety a little high today\n\n10:15pm - 1 Benadryl, 1 stool softener, 1 Magnesium Citrate"
-    },
-    "2026-06-09": {
-      Breakfast: "2 pcs toast with butter",
-      Lunch: "Fried egg sandwich with bacon, lettuce, tomato, Swiss cheese, onion. Chicken nuggets with sweet spicy honey sauce",
-      MiddaySnack: "Chicken bites with sweet honey glaze",
-      Dinner: "Meatloaf with side of chicken chow mein",
-      AfterDinner: "Nature Valley apple crisp oat bar, 1 cup black tea with monk fruit sugar",
-      Symptoms: "Breakfast - 1 Prednisone + 1 Reactine\n\nLunchtime - 1 each D3, MSM, NAC, OsteoMove\n\nNo anxiety feelings today\n\nSore right testicle - strange random pressure/pulsing\n\n10:15pm - 1 Benadryl, 1 stool softener, 1 Magnesium Citrate"
-    },
-    "2026-06-10": {
-      Breakfast: "Cobb salad with bacon, tomato, avocado, blue cheese, oil, vinegar, grilled chicken",
-      Lunch: "Sweet potato, cantaloupe, strawberry, honeydew",
-      Symptoms: ""
-    },
-    "2026-06-11": {
-      Breakfast: "2pc toast with butter, two hard boiled eggs",
-      MiddaySnack: "Small bag salt and vinegar chips",
-      Dinner: "Cobb salad with lettuce, bacon bits, avocado, blue cheese, tomatoes, hard boiled egg",
-      AfterDinner: "8oz chicken bites with hot honey sauce",
-      Symptoms: "One Prednisone, one Reactine\n\nNo symptoms of allergy or nerve firing up until after dinner (very mild) - took a Benadryl"
-    }
+// PRELOAD historical data — runs once, uses new key fd2_preloaded
+function preload(){
+  if(localStorage.getItem("fd2_preloaded")) return;
+  const existing = loadAll();
+  const hist = {
+    "2026-06-03":{Breakfast:"Nothing",Lunch:"Canned tuna mixed with avocado mayonnaise on toasted challah bread with butter",MiddaySnack:"Nature Valley peanut butter oat bar",Dinner:"Roast porchetta sandwich with shredded/pickled cabbage, sriracha mayonnaise on brioche bun",AfterDinner:"Tim Hortons ice cap - milk, chocolate syrup and crushed ice",Drugs:"",Symptoms:"No symptoms"},
+    "2026-06-04":{Breakfast:"Nothing",Lunch:"Chicken Shawarma sandwich in a pita with hummus, lettuce, tomato, onion, turnips, parsley, garlic sauce, tahini sauce, and a bit of hot sauce",Dinner:"10oz salmon marinated in avocado oil, bulgogi sauce, salt and pepper. Green leaf salad with avocado oil, apple cider vinegar, lemon juice - air fried.",Drugs:"",Symptoms:""},
+    "2026-06-05":{Breakfast:"Nothing",Lunch:"Two cans sardines",MiddaySnack:"Nature Valley chocolate oat bars",Dinner:"Two chicken thighs marinated in avocado oil, salt and pepper, lemon butter sauce. Green leaf salad with avocado oil, apple cider vinegar, lemon juice - air fried.",AfterDinner:"Nature Valley almond oat bar",Drugs:"",Symptoms:"6:30pm - ate dinner\n\n9:45pm - went to bed\n\n12:00am - woke up, throat tightening, rash starting to spread, mild difficulty swallowing\n\n12:15am - called 911\n\n1:00am - at hospital\n\n2:45am - saw doctor, given 1 Prednisone + 1 Reactine\n\n3:15am - home, rash starting to settle down"},
+    "2026-06-06":{Breakfast:"Breakfast sandwich with fried egg peameal bacon and American cheese on a brioche bun",Lunch:"Barbecued brisket sandwich with shredded cabbage and a side Caesar salad with Caesar dressing, croutons, and bacon bits",Dinner:"3 scrambled eggs, 2 pieces challah bread toasted with butter",AfterDinner:"Crunchy Nature Valley apple crisp oat bars, sweet mint & fennel tea",Drugs:"",Symptoms:"7AM took a Prednisone and one Claritin tablet\n\n9:30AM golfed - around the 15th hole had a mild anxiety attack, arms started getting itchy, took a Benadryl, did some breathing exercises and calmed down.\n\n2:45PM took a Benadryl\n\n4:30PM took another Benadryl\n\n9:45PM took another Benadryl\n\n10:30PM going to bed, took a Benadryl overnight"},
+    "2026-06-07":{Breakfast:"Fried egg, two pieces of bacon, American cheese on a brioche bun",Lunch:"Half rack barbecue ribs, side of mac & cheese, side of half corn on the cob buttered, two Coke Zero",MiddaySnack:"Tim Hortons apple fritter",Dinner:"Fried egg sandwich on challah bread buttered, sweet mint & fennel tea",AfterDinner:"Crunchy Nature Valley apple crisp oat bars",Drugs:"",Symptoms:"7:00AM took a Prednisone and one Reactine pill\n\n6:00PM took a Benadryl pill\n\n11:00PM took another Benadryl pill\n\nNo hive symptoms today"},
+    "2026-06-08":{Breakfast:"Nature Valley chocolate oat bar",Lunch:"Shawarma chicken wrap with lettuce, cucumber, onions, parsley, hummus, tahini, and a little bit of hot sauce",Dinner:"8oz salmon fillet with salt & pepper, onion powder, garlic powder, side of chicken chow mein",AfterDinner:"1 cup black tea with milk / monk fruit sugar, 1 Nature Valley peanut butter oat bar",Drugs:"1 Prednisone + 1 Reactine, 1 each D3, MSM, NAC, OsteoMove. 10:15pm - 1 Benadryl, 1 stool softener, 1 Magnesium Citrate",Symptoms:"Woke up feeling a bit anxious, nerve tingling firing all over body, anxiety a little high today"},
+    "2026-06-09":{Breakfast:"2 pcs toast with butter",Lunch:"Fried egg sandwich with bacon, lettuce, tomato, Swiss cheese, onion. Chicken nuggets with sweet spicy honey sauce",MiddaySnack:"Chicken bites with sweet honey glaze",Dinner:"Meatloaf with side of chicken chow mein",AfterDinner:"Nature Valley apple crisp oat bar, 1 cup black tea with monk fruit sugar",Drugs:"Breakfast - 1 Prednisone + 1 Reactine. Lunchtime - 1 each D3, MSM, NAC, OsteoMove. 10:15pm - 1 Benadryl, 1 stool softener, 1 Magnesium Citrate",Symptoms:"No anxiety feelings today. Sore right testicle - strange random pressure/pulsing"},
+    "2026-06-10":{Breakfast:"Cobb salad with bacon, tomato, avocado, blue cheese, oil, vinegar, grilled chicken",Lunch:"2x boiled eggs on toast with butter",MiddaySnack:"1x small bag salt and vinegar chips",Dinner:"Cobb salad with bacon, tomato, avocado, blue cheese, oil, vinegar, grilled chicken, 3x chocolate chip cookies, 8oz chicken bites with sweet honey sauce",Drugs:"",Symptoms:""},
+    "2026-06-11":{Breakfast:"Two pieces of toast, two hard boiled eggs",Lunch:"Chicken Shawarma wrap with hummus, baba ghanoush, eggplant, onions, tomatoes, tahini, and hot sauce",Dinner:"Pork loin chop, zucchini, sweet potato, garlic powder, onion powder",AfterDinner:"Nature Valley apple crisp oat bar, 1 cup black tea with monk fruit sugar",Drugs:"One pill Prednisone, one pill Reactine",Symptoms:"No anxiety symptoms, no allergy symptoms. Saw allergist today - prescribed two EpiPens and Sandoz Bilastine"}
   };
-
-  // Field-level merge: for each day, existing non-empty fields win, empty fields fall back to preloaded
-  const existing = loadData();
-  const merged = { ...preloaded };
+  // Merge: historical fills gaps, any existing saved data wins field by field
+  const merged = {...hist};
   Object.keys(existing).forEach(day => {
-    if (!merged[day]) { merged[day] = existing[day]; return; }
-    // Merge field by field — existing wins only if non-empty
-    Object.keys(existing[day]).forEach(field => {
-      if (existing[day][field] && existing[day][field].trim()) {
-        merged[day][field] = existing[day][field];
-      }
+    if(!merged[day]){ merged[day]=existing[day]; return; }
+    Object.keys(existing[day]).forEach(f => {
+      if(existing[day][f]&&existing[day][f].trim()) merged[day][f]=existing[day][f];
     });
   });
-  saveData(merged);
-  localStorage.setItem("foodDiaryPreloaded", "v4");
+  saveAll(merged);
+  localStorage.setItem("fd2_preloaded","1");
 }
 
-preloadData();
+// INIT
+preload();
 renderMonthSelector();
 renderDaySelector();
+loadDay();
 renderSummary();
-
-// Auto-save on every keystroke
-document.querySelectorAll("textarea").forEach(ta => {
-  ta.addEventListener("input", autoSave);
-});
 </script>
 </body>
 </html>
+
