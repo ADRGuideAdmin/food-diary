@@ -30,6 +30,12 @@ h1 { font-size: 24px; font-weight: normal; color: #e8dcc8; letter-spacing: 1px; 
 .meal-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #7eb8a4; }
 .histamine-badge { font-size: 9px; color: #e07a5f; background: rgba(224,122,95,0.15); padding: 2px 8px; border-radius: 10px; letter-spacing: 1px; display: none; }
 .histamine-badge.show { display: block; }
+.camera-row { display: flex; gap: 8px; align-items: flex-start; }
+.camera-row textarea { flex: 1; }
+.cam-btn { flex-shrink: 0; width: 44px; height: 44px; background: rgba(126,184,164,0.15); border: 1px solid #7eb8a4; border-radius: 10px; font-size: 20px; cursor: pointer; }
+.cam-btn:active { background: rgba(126,184,164,0.3); }
+.analyzing { font-size: 12px; color: #7eb8a4; letter-spacing: 1px; padding: 6px 0; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 textarea { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid #2a3f50; border-radius: 10px; padding: 10px 14px; color: #e8dcc8; font-size: 15px; font-family: Georgia, serif; resize: none; outline: none; caret-color: white; -webkit-appearance: none; }
 textarea::placeholder { color: #4a6070; }
 textarea.flagged { border-color: rgba(224,122,95,0.5); }
@@ -38,14 +44,13 @@ textarea.flagged { border-color: rgba(224,122,95,0.5); }
 .histamine-box-title { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #e07a5f; margin-bottom: 5px; }
 .histamine-tags { display: flex; flex-wrap: wrap; gap: 5px; }
 .histamine-tag { font-size: 12px; color: #e8dcc8; background: rgba(224,122,95,0.2); padding: 2px 8px; border-radius: 20px; text-transform: capitalize; font-family: Georgia, serif; }
-.field-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px; display: block; }
-.field-label.teal { color: #7eb8a4; }
-.field-label.gold { color: #c4956a; }
 .suggestions { position: absolute; left: 0; right: 0; background: #1a2a3a; border: 1px solid #3a5060; border-radius: 10px; z-index: 100; max-height: 180px; overflow-y: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
 .suggestion-item { padding: 10px 14px; font-size: 13px; color: #e8dcc8; cursor: pointer; border-bottom: 1px solid #2a3f50; font-family: Georgia, serif; }
 .suggestion-item:last-child { border-bottom: none; }
-.suggestion-item:active { background: rgba(126,184,164,0.2); }
 .suggestion-match { color: #7eb8a4; font-weight: bold; }
+.field-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px; display: block; }
+.field-label.teal { color: #7eb8a4; }
+.field-label.gold { color: #c4956a; }
 .btn-save { width: 100%; padding: 14px; background: linear-gradient(135deg, #7eb8a4, #5a9e8a); border: none; border-radius: 10px; color: #0f1923; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-family: Georgia, serif; cursor: pointer; margin-bottom: 10px; font-weight: bold; }
 .btn-export { width: 100%; padding: 12px; background: transparent; border: 1px solid #c4956a; border-radius: 10px; color: #c4956a; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-family: Georgia, serif; cursor: pointer; margin-bottom: 10px; }
 .btn-clear { width: 100%; padding: 10px; background: transparent; border: 1px solid rgba(224,122,95,0.25); border-radius: 10px; color: rgba(224,122,95,0.5); font-size: 9px; letter-spacing: 3px; text-transform: uppercase; font-family: Georgia, serif; cursor: pointer; margin-bottom: 24px; }
@@ -60,12 +65,6 @@ textarea.flagged { border-color: rgba(224,122,95,0.5); }
 .summary-line .flagged { color: #e07a5f; }
 .summary-drugs { font-size: 12px; color: #7eb8a4; margin-top: 3px; }
 .summary-symptoms { font-size: 12px; color: #c4956a; margin-top: 3px; }
-.camera-row { display: flex; gap: 8px; align-items: flex-start; }
-.camera-row textarea { flex: 1; }
-.cam-btn { flex-shrink: 0; width: 44px; height: 44px; background: rgba(126,184,164,0.15); border: 1px solid #7eb8a4; border-radius: 10px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: 0; }
-.cam-btn:active { background: rgba(126,184,164,0.3); }
-.analyzing { font-size: 12px; color: #7eb8a4; letter-spacing: 1px; padding: 6px 0; animation: pulse 1.5s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 .footer { text-align: center; font-size: 10px; color: #3a5060; letter-spacing: 1px; margin-top: 10px; }
 </style>
 </head>
@@ -83,7 +82,11 @@ textarea.flagged { border-color: rgba(224,122,95,0.5); }
 
 <div class="meal-block">
   <div class="meal-header"><span class="meal-label">Breakfast</span><span class="histamine-badge" id="badge_Breakfast">⚠ HIGH HISTAMINE</span></div>
-  <div class="camera-row"><textarea id="field_Breakfast" rows="2" placeholder="What did you have for breakfast?"></textarea><button class="cam-btn" onclick="triggerCamera('Breakfast')" title="Take photo">📷</button><input type="file" id="cam_Breakfast" accept="image/*" capture="environment" style="display:none" onchange="analyzePhoto(this,'Breakfast')"></div>
+  <div class="camera-row">
+    <textarea id="field_Breakfast" rows="2" placeholder="What did you have for breakfast?"></textarea>
+    <button class="cam-btn" onclick="triggerCamera('Breakfast')">📷</button>
+    <input type="file" id="cam_Breakfast" accept="image/*" capture="environment" style="display:none" onchange="analyzePhoto(this,'Breakfast')">
+  </div>
   <div class="analyzing" id="analyzing_Breakfast" style="display:none">🔍 Analyzing photo...</div>
   <div class="histamine-box" id="box_Breakfast"><div class="histamine-box-title">High Histamine Items Detected</div><div class="histamine-tags" id="tags_Breakfast"></div></div>
   <div class="suggestions" id="sug_Breakfast" style="display:none"></div>
@@ -91,7 +94,11 @@ textarea.flagged { border-color: rgba(224,122,95,0.5); }
 
 <div class="meal-block">
   <div class="meal-header"><span class="meal-label">Lunch</span><span class="histamine-badge" id="badge_Lunch">⚠ HIGH HISTAMINE</span></div>
-  <div class="camera-row"><textarea id="field_Lunch" rows="2" placeholder="What did you have for lunch?"></textarea><button class="cam-btn" onclick="triggerCamera('Lunch')" title="Take photo">📷</button><input type="file" id="cam_Lunch" accept="image/*" capture="environment" style="display:none" onchange="analyzePhoto(this,'Lunch')"></div>
+  <div class="camera-row">
+    <textarea id="field_Lunch" rows="2" placeholder="What did you have for lunch?"></textarea>
+    <button class="cam-btn" onclick="triggerCamera('Lunch')">📷</button>
+    <input type="file" id="cam_Lunch" accept="image/*" capture="environment" style="display:none" onchange="analyzePhoto(this,'Lunch')">
+  </div>
   <div class="analyzing" id="analyzing_Lunch" style="display:none">🔍 Analyzing photo...</div>
   <div class="histamine-box" id="box_Lunch"><div class="histamine-box-title">High Histamine Items Detected</div><div class="histamine-tags" id="tags_Lunch"></div></div>
   <div class="suggestions" id="sug_Lunch" style="display:none"></div>
@@ -99,7 +106,11 @@ textarea.flagged { border-color: rgba(224,122,95,0.5); }
 
 <div class="meal-block">
   <div class="meal-header"><span class="meal-label">Midday Snack</span><span class="histamine-badge" id="badge_MiddaySnack">⚠ HIGH HISTAMINE</span></div>
-  <div class="camera-row"><textarea id="field_MiddaySnack" rows="2" placeholder="What did you have for a midday snack?"></textarea><button class="cam-btn" onclick="triggerCamera('MiddaySnack')" title="Take photo">📷</button><input type="file" id="cam_MiddaySnack" accept="image/*" capture="environment" style="display:none" onchange="analyzePhoto(this,'MiddaySnack')"></div>
+  <div class="camera-row">
+    <textarea id="field_MiddaySnack" rows="2" placeholder="What did you have for a midday snack?"></textarea>
+    <button class="cam-btn" onclick="triggerCamera('MiddaySnack')">📷</button>
+    <input type="file" id="cam_MiddaySnack" accept="image/*" capture="environment" style="display:none" onchange="analyzePhoto(this,'MiddaySnack')">
+  </div>
   <div class="analyzing" id="analyzing_MiddaySnack" style="display:none">🔍 Analyzing photo...</div>
   <div class="histamine-box" id="box_MiddaySnack"><div class="histamine-box-title">High Histamine Items Detected</div><div class="histamine-tags" id="tags_MiddaySnack"></div></div>
   <div class="suggestions" id="sug_MiddaySnack" style="display:none"></div>
@@ -107,7 +118,11 @@ textarea.flagged { border-color: rgba(224,122,95,0.5); }
 
 <div class="meal-block">
   <div class="meal-header"><span class="meal-label">Dinner</span><span class="histamine-badge" id="badge_Dinner">⚠ HIGH HISTAMINE</span></div>
-  <div class="camera-row"><textarea id="field_Dinner" rows="2" placeholder="What did you have for dinner?"></textarea><button class="cam-btn" onclick="triggerCamera('Dinner')" title="Take photo">📷</button><input type="file" id="cam_Dinner" accept="image/*" capture="environment" style="display:none" onchange="analyzePhoto(this,'Dinner')"></div>
+  <div class="camera-row">
+    <textarea id="field_Dinner" rows="2" placeholder="What did you have for dinner?"></textarea>
+    <button class="cam-btn" onclick="triggerCamera('Dinner')">📷</button>
+    <input type="file" id="cam_Dinner" accept="image/*" capture="environment" style="display:none" onchange="analyzePhoto(this,'Dinner')">
+  </div>
   <div class="analyzing" id="analyzing_Dinner" style="display:none">🔍 Analyzing photo...</div>
   <div class="histamine-box" id="box_Dinner"><div class="histamine-box-title">High Histamine Items Detected</div><div class="histamine-tags" id="tags_Dinner"></div></div>
   <div class="suggestions" id="sug_Dinner" style="display:none"></div>
@@ -115,7 +130,11 @@ textarea.flagged { border-color: rgba(224,122,95,0.5); }
 
 <div class="meal-block">
   <div class="meal-header"><span class="meal-label">After Dinner Snack</span><span class="histamine-badge" id="badge_AfterDinner">⚠ HIGH HISTAMINE</span></div>
-  <div class="camera-row"><textarea id="field_AfterDinner" rows="2" placeholder="What did you have after dinner?"></textarea><button class="cam-btn" onclick="triggerCamera('AfterDinner')" title="Take photo">📷</button><input type="file" id="cam_AfterDinner" accept="image/*" capture="environment" style="display:none" onchange="analyzePhoto(this,'AfterDinner')"></div>
+  <div class="camera-row">
+    <textarea id="field_AfterDinner" rows="2" placeholder="What did you have after dinner?"></textarea>
+    <button class="cam-btn" onclick="triggerCamera('AfterDinner')">📷</button>
+    <input type="file" id="cam_AfterDinner" accept="image/*" capture="environment" style="display:none" onchange="analyzePhoto(this,'AfterDinner')">
+  </div>
   <div class="analyzing" id="analyzing_AfterDinner" style="display:none">🔍 Analyzing photo...</div>
   <div class="histamine-box" id="box_AfterDinner"><div class="histamine-box-title">High Histamine Items Detected</div><div class="histamine-tags" id="tags_AfterDinner"></div></div>
   <div class="suggestions" id="sug_AfterDinner" style="display:none"></div>
@@ -144,264 +163,153 @@ textarea.flagged { border-color: rgba(224,122,95,0.5); }
 <script>
 const MEAL_FIELDS = ["Breakfast","Lunch","MiddaySnack","Dinner","AfterDinner"];
 const ALL_FIELDS = ["Breakfast","Lunch","MiddaySnack","Dinner","AfterDinner","Drugs","Symptoms"];
-const LABELS = { Breakfast:"Breakfast", Lunch:"Lunch", MiddaySnack:"Midday Snack", Dinner:"Dinner", AfterDinner:"After Dinner Snack", Drugs:"Drugs Taken", Symptoms:"Symptoms/Notes" };
-
+const LABELS = {Breakfast:"Breakfast",Lunch:"Lunch",MiddaySnack:"Midday Snack",Dinner:"Dinner",AfterDinner:"After Dinner Snack",Drugs:"Drugs Taken",Symptoms:"Symptoms/Notes"};
 const HIGH_HISTAMINE = ["sardines","tuna","canned fish","salami","pepperoni","bacon","smoked","tomato","avocado","spinach","eggplant","banana","strawberry","citrus","lemon","orange","pineapple","alcohol","wine","beer","vinegar","soy sauce","ketchup","bbq sauce","parmesan","cheddar","aged cheese","cheese","yogurt","fermented","leftover","mayonnaise","hot dog","sausage","processed meat","pickles","mustard","worcestershire","anchovies"];
 
-// AUTOCOMPLETE SUGGESTIONS per field
 const SUGGESTIONS = {
-  Breakfast: [
-    "2x pieces of toast with butter",
-    "2x hard boiled eggs on toast with butter",
-    "Scrambled eggs on toast with butter",
-    "Fried egg sandwich on challah bread with butter",
-    "Nature Valley chocolate oat bar",
-    "Nature Valley peanut butter oat bar",
-    "Nothing"
-  ],
-  Lunch: [
-    "Chicken Shawarma wrap with hummus, lettuce, tomato, onion, tahini",
-    "2x boiled eggs on toast with butter",
-    "Fried egg sandwich with toast",
-    "Nature Valley peanut butter oat bar"
-  ],
-  MiddaySnack: [
-    "Nature Valley peanut butter oat bar",
-    "Nature Valley chocolate oat bar",
-    "Nature Valley apple crisp oat bar",
-    "Chicken bites with sweet honey glaze",
-    "Nothing"
-  ],
-  Dinner: [
-    "8oz salmon fillet with salt & pepper, onion powder, garlic powder",
-    "Scrambled eggs with toast and butter",
-    "Pork loin chop with zucchini and sweet potato",
-    "Two chicken thighs with green salad",
-    "Meatloaf with side of chicken chow mein"
-  ],
-  AfterDinner: [
-    "Nature Valley apple crisp oat bar, 1 cup black tea with monk fruit sugar",
-    "Nature Valley peanut butter oat bar, 1 cup black tea with milk",
-    "Sweet mint & fennel tea",
-    "1 cup black tea with milk and monk fruit sugar"
-  ],
-  Drugs: [
-    "Morning - 2x Bilastine 20mg",
-    "Evening - 2x Bilastine 20mg",
-    "Morning - 2x Bilastine 20mg + 1x each D3, MSM, NAC, OsteoMove",
-    "Morning - 2x Bilastine 20mg + 1x each D3, MSM, NAC, OsteoMove. Evening - 2x Bilastine 20mg + 1x Benadryl + 1x stool softener + 1x Magnesium Citrate",
-    "1x Benadryl",
-    "1x EpiPen used"
-  ],
-  Symptoms: [
-    "No allergy symptoms today",
-    "No anxiety today",
-    "Mild anxiety - motor running",
-    "Nerve tingling / firing",
-    "Hives / rash appearing",
-    "Throat tightening",
-    "No symptoms today"
-  ]
+  Breakfast:["2x pieces of toast with butter","2x hard boiled eggs on toast with butter","Scrambled eggs on toast with butter","Fried egg sandwich on challah bread with butter","Nature Valley chocolate oat bar","Nature Valley peanut butter oat bar","Nothing"],
+  Lunch:["Chicken Shawarma wrap with hummus, lettuce, tomato, onion, tahini","2x boiled eggs on toast with butter","Fried egg sandwich with toast","Nature Valley peanut butter oat bar"],
+  MiddaySnack:["Nature Valley peanut butter oat bar","Nature Valley chocolate oat bar","Nature Valley apple crisp oat bar","Chicken bites with sweet honey glaze","Nothing"],
+  Dinner:["8oz salmon fillet with salt & pepper, onion powder, garlic powder","Scrambled eggs with toast and butter","Pork loin chop with zucchini and sweet potato","Two chicken thighs with green salad","Meatloaf with side of chicken chow mein"],
+  AfterDinner:["Nature Valley apple crisp oat bar, 1 cup black tea with monk fruit sugar","Nature Valley peanut butter oat bar, 1 cup black tea with milk","Sweet mint & fennel tea","1 cup black tea with milk and monk fruit sugar"],
+  Drugs:["Morning - 2x Bilastine 20mg","Evening - 2x Bilastine 20mg","Morning - 2x Bilastine 20mg + 1x each D3, MSM, NAC, OsteoMove","Morning - 2x Bilastine 20mg + 1x each D3, MSM, NAC, OsteoMove. Evening - 2x Bilastine 20mg + 1x Benadryl + 1x stool softener + 1x Magnesium Citrate","1x Benadryl","1x EpiPen used"],
+  Symptoms:["No allergy symptoms today","No anxiety today","Mild anxiety - motor running","Nerve tingling / firing","Hives / rash appearing","Throat tightening","No symptoms today"]
 };
 
-// Build suggestion list dynamically from past entries too
-function getAllSuggestions(fieldId) {
-  const base = SUGGESTIONS[fieldId] || [];
-  const data = loadAll();
-  const past = new Set();
-  Object.values(data).forEach(day => {
-    if(day[fieldId] && day[fieldId].trim().length > 3) past.add(day[fieldId].trim());
-  });
-  const combined = [...base];
-  past.forEach(p => { if(!combined.includes(p)) combined.push(p); });
-  return combined;
-}
-
-function showSuggestions(fieldId) {
-  const ta = document.getElementById("field_"+fieldId);
-  const sug = document.getElementById("sug_"+fieldId);
-  const query = ta.value.toLowerCase().trim();
-  const all = getAllSuggestions(fieldId);
-  // If empty field, show all suggestions for Drugs and Symptoms
-  let matches;
-  if(!query) {
-    if(fieldId === "Drugs" || fieldId === "Symptoms") {
-      matches = all;
-    } else {
-      sug.style.display="none"; return;
-    }
-  } else {
-    matches = all.filter(s => s.toLowerCase().includes(query) && s.toLowerCase() !== query);
-  }
-  if(!matches.length){ sug.style.display="none"; return; }
-  sug.innerHTML = "";
-  matches.slice(0,6).forEach(match => {
-    const div = document.createElement("div");
-    div.className = "suggestion-item";
-    if(query) {
-      const idx = match.toLowerCase().indexOf(query);
-      if(idx >= 0){
-        div.innerHTML = match.substring(0,idx) + '<span class="suggestion-match">' + match.substring(idx,idx+query.length) + '</span>' + match.substring(idx+query.length);
-      } else {
-        div.textContent = match;
-      }
-    } else {
-      div.textContent = match;
-    }
-    div.onmousedown = (e) => {
-      e.preventDefault();
-      ta.value = match;
-      sug.style.display = "none";
-      if(MEAL_FIELDS.includes(fieldId)) checkHistamine(fieldId);
-    };
-    sug.appendChild(div);
-  });
-  sug.style.display = "block";
-};
-
-function hideSuggestions(fieldId){
-  setTimeout(() => {
-    const sug = document.getElementById("sug_"+fieldId);
-    if(sug) sug.style.display = "none";
-  }, 150);
-}
-
+function pad(n){return String(n).padStart(2,"0");}
+function formatDate(d){return new Date(d+"T12:00:00").toLocaleDateString("en-CA",{weekday:"long",month:"long",day:"numeric"});}
 const TODAY = new Date().toISOString().split("T")[0];
-function pad(n){ return String(n).padStart(2,"0"); }
-function formatDate(d){ return new Date(d+"T12:00:00").toLocaleDateString("en-CA",{weekday:"long",month:"long",day:"numeric"}); }
 
 function getMonths(){
-  const months = [];
-  const [ty,tm] = TODAY.split("-").map(Number);
-  let y=2026, m=5;
-  while(y<ty||(y===ty&&m<=tm)){ months.push(`${y}-${pad(m)}`); m++; if(m>12){m=1;y++;} }
+  const months=[];
+  const [ty,tm]=TODAY.split("-").map(Number);
+  let y=2026,m=5;
+  while(y<ty||(y===ty&&m<=tm)){months.push(`${y}-${pad(m)}`);m++;if(m>12){m=1;y++;}}
   return months;
 }
 
 function getDaysForMonth(mk){
-  const [y,m] = mk.split("-").map(Number);
-  const dim = new Date(y,m,0).getDate();
-  const startD = (mk==="2026-05")?31:1;
+  const [y,m]=mk.split("-").map(Number);
+  const dim=new Date(y,m,0).getDate();
+  const startD=(mk==="2026-05")?31:1;
   const days=[];
   for(let d=startD;d<=dim;d++) days.push(`${y}-${pad(m)}-${pad(d)}`);
   return days;
 }
 
-function getHistamineItems(text){ const l=text.toLowerCase(); return HIGH_HISTAMINE.filter(f=>l.includes(f)); }
+function getHistamineItems(text){const l=text.toLowerCase();return HIGH_HISTAMINE.filter(f=>l.includes(f));}
 
 function checkHistamine(id){
-  const val = document.getElementById("field_"+id).value;
-  const items = getHistamineItems(val);
-  const flagged = items.length>0;
-  document.getElementById("field_"+id).className = flagged?"flagged":"";
-  document.getElementById("badge_"+id).className = "histamine-badge"+(flagged?" show":"");
-  document.getElementById("box_"+id).className = "histamine-box"+(flagged?" show":"");
-  const tags = document.getElementById("tags_"+id);
+  const val=document.getElementById("field_"+id).value;
+  const items=getHistamineItems(val);
+  const flagged=items.length>0;
+  document.getElementById("field_"+id).className=flagged?"flagged":"";
+  document.getElementById("badge_"+id).className="histamine-badge"+(flagged?" show":"");
+  document.getElementById("box_"+id).className="histamine-box"+(flagged?" show":"");
+  const tags=document.getElementById("tags_"+id);
   tags.innerHTML="";
-  items.forEach(item=>{ const s=document.createElement("span"); s.className="histamine-tag"; s.textContent=item; tags.appendChild(s); });
+  items.forEach(item=>{const s=document.createElement("span");s.className="histamine-tag";s.textContent=item;tags.appendChild(s);});
 }
 
-// Attach listeners to all fields
-ALL_FIELDS.forEach(id => {
-  const ta = document.getElementById("field_"+id);
-  ta.addEventListener("input", () => {
-    if(MEAL_FIELDS.includes(id)) checkHistamine(id);
-    showSuggestions(id);
+function getAllSuggestions(fieldId){
+  const base=SUGGESTIONS[fieldId]||[];
+  const data=loadAll();
+  const past=new Set();
+  Object.values(data).forEach(day=>{if(day[fieldId]&&day[fieldId].trim().length>3) past.add(day[fieldId].trim());});
+  const combined=[...base];
+  past.forEach(p=>{if(!combined.includes(p)) combined.push(p);});
+  return combined;
+}
+
+function showSuggestions(fieldId){
+  const ta=document.getElementById("field_"+fieldId);
+  const sug=document.getElementById("sug_"+fieldId);
+  if(!sug) return;
+  const query=ta.value.toLowerCase().trim();
+  const all=getAllSuggestions(fieldId);
+  let matches;
+  if(!query){
+    if(fieldId==="Drugs"||fieldId==="Symptoms") matches=all;
+    else{sug.style.display="none";return;}
+  } else {
+    matches=all.filter(s=>s.toLowerCase().includes(query)&&s.toLowerCase()!==query);
+  }
+  if(!matches.length){sug.style.display="none";return;}
+  sug.innerHTML="";
+  matches.slice(0,6).forEach(match=>{
+    const div=document.createElement("div");
+    div.className="suggestion-item";
+    if(query){
+      const idx=match.toLowerCase().indexOf(query);
+      if(idx>=0) div.innerHTML=match.substring(0,idx)+'<span class="suggestion-match">'+match.substring(idx,idx+query.length)+'</span>'+match.substring(idx+query.length);
+      else div.textContent=match;
+    } else div.textContent=match;
+    div.onmousedown=(e)=>{e.preventDefault();ta.value=match;sug.style.display="none";if(MEAL_FIELDS.includes(fieldId)) checkHistamine(fieldId);};
+    sug.appendChild(div);
   });
-  ta.addEventListener("blur", () => hideSuggestions(id));
-  ta.addEventListener("focus", () => { showSuggestions(id); });
+  sug.style.display="block";
+}
+
+function hideSuggestions(fieldId){setTimeout(()=>{const s=document.getElementById("sug_"+fieldId);if(s) s.style.display="none";},150);}
+
+ALL_FIELDS.forEach(id=>{
+  const ta=document.getElementById("field_"+id);
+  if(!ta) return;
+  ta.addEventListener("input",()=>{if(MEAL_FIELDS.includes(id)) checkHistamine(id);showSuggestions(id);});
+  ta.addEventListener("blur",()=>hideSuggestions(id));
+  ta.addEventListener("focus",()=>showSuggestions(id));
 });
 
-function triggerCamera(fieldId) {
-  document.getElementById("cam_"+fieldId).click();
-}
+function triggerCamera(fieldId){document.getElementById("cam_"+fieldId).click();}
 
-async function analyzePhoto(input, fieldId) {
-  if(!input.files || !input.files[0]) return;
-  const file = input.files[0];
-  const analyzing = document.getElementById("analyzing_"+fieldId);
-  const ta = document.getElementById("field_"+fieldId);
-  analyzing.style.display = "block";
-  ta.placeholder = "Analyzing photo...";
-
-  try {
-    // Convert image to base64
-    const base64 = await new Promise((res, rej) => {
-      const reader = new FileReader();
-      reader.onload = () => res(reader.result.split(",")[1]);
-      reader.onerror = rej;
-      reader.readAsDataURL(file);
-    });
-
-    const mediaType = file.type || "image/jpeg";
-
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 1000,
-        messages: [{
-          role: "user",
-          content: [
-            {
-              type: "image",
-              source: { type: "base64", media_type: mediaType, data: base64 }
-            },
-            {
-              type: "text",
-              text: `You are a food identification assistant for a patient tracking their diet for an allergist. Look at this photo and identify what food or meal is shown. List the dish name and all likely ingredients in a concise natural description (e.g. "Caesar salad with romaine lettuce, croutons, parmesan cheese, caesar dressing, and bacon bits"). Be specific about ingredients. Keep it to 1-2 sentences max. Do not include any preamble, just the food description.`
-            }
-          ]
-        }]
+async function analyzePhoto(input,fieldId){
+  if(!input.files||!input.files[0]) return;
+  const file=input.files[0];
+  const analyzing=document.getElementById("analyzing_"+fieldId);
+  const ta=document.getElementById("field_"+fieldId);
+  analyzing.style.display="block";
+  try{
+    const base64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(file);});
+    const response=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"claude-sonnet-4-6",max_tokens:300,
+        messages:[{role:"user",content:[
+          {type:"image",source:{type:"base64",media_type:file.type||"image/jpeg",data:base64}},
+          {type:"text",text:"Identify this food. List the dish name and all likely ingredients in one concise sentence. No preamble, just the description."}
+        ]}]
       })
     });
-
-    const data = await response.json();
-    const description = data.content?.[0]?.text || "";
-
-    if(description) {
-      ta.value = description;
-      checkHistamine(fieldId);
-      showSuggestions(fieldId);
-    } else {
-      ta.value = "";
-      ta.placeholder = "Couldn't identify — type manually";
-    }
-  } catch(err) {
-    ta.value = "";
-    ta.placeholder = "Error analyzing photo — type manually";
-    console.error(err);
-  } finally {
-    analyzing.style.display = "none";
-    ta.placeholder = ta.value ? "" : "What did you have?";
-    input.value = ""; // reset so same photo can be retaken
-  }
+    const data=await response.json();
+    const desc=data.content?.[0]?.text||"";
+    if(desc){ta.value=desc.trim();if(MEAL_FIELDS.includes(fieldId)) checkHistamine(fieldId);}
+  }catch(err){console.error("Photo analysis error:",err);}
+  finally{analyzing.style.display="none";input.value="";}
 }
 
-function saveAll(data){ localStorage.setItem("fd2",JSON.stringify(data)); }
+function loadAll(){try{return JSON.parse(localStorage.getItem("fd2")||"{}");}catch(e){return {};}}
+function saveAll(data){localStorage.setItem("fd2",JSON.stringify(data));}
 
 function loadDay(){
-  const data = loadAll();
-  const day = data[activeDate]||{};
-  ALL_FIELDS.forEach(id => { document.getElementById("field_"+id).value = day[id]||""; });
-  MEAL_FIELDS.forEach(id => checkHistamine(id));
+  const data=loadAll();
+  const day=data[activeDate]||{};
+  ALL_FIELDS.forEach(id=>{document.getElementById("field_"+id).value=day[id]||"";});
+  MEAL_FIELDS.forEach(id=>checkHistamine(id));
   document.getElementById("saveMsg").textContent="";
-  ALL_FIELDS.forEach(id => { const s=document.getElementById("sug_"+id); if(s) s.style.display="none"; });
+  ALL_FIELDS.forEach(id=>{const s=document.getElementById("sug_"+id);if(s) s.style.display="none";});
 }
 
 function saveDay(){
-  const data = loadAll();
-  const dayData={};
-  let hasContent=false;
-  ALL_FIELDS.forEach(id=>{ const val=document.getElementById("field_"+id).value.trim(); dayData[id]=val; if(val) hasContent=true; });
-  if(hasContent){ data[activeDate]=dayData; } else { delete data[activeDate]; }
+  const data=loadAll();
+  const dayData={};let hasContent=false;
+  ALL_FIELDS.forEach(id=>{const val=document.getElementById("field_"+id).value.trim();dayData[id]=val;if(val) hasContent=true;});
+  if(hasContent) data[activeDate]=dayData; else delete data[activeDate];
   saveAll(data);
   const msg=document.getElementById("saveMsg");
   msg.textContent="✓ Saved";
-  setTimeout(()=>{ msg.textContent=""; },3000);
-  renderDaySelector();
-  renderSummary();
+  setTimeout(()=>{msg.textContent="";},3000);
+  renderDaySelector();renderSummary();
 }
 
 let activeMonth=TODAY.substring(0,7);
@@ -418,8 +326,8 @@ function renderMonthSelector(){
       activeMonth=mk;
       const days=getDaysForMonth(mk);
       if(days.includes(TODAY)) activeDate=TODAY;
-      else { const past=days.filter(d=>d<=TODAY); activeDate=past.length?past[past.length-1]:days[0]; }
-      renderMonthSelector(); renderDaySelector(); loadDay();
+      else{const past=days.filter(d=>d<=TODAY);activeDate=past.length?past[past.length-1]:days[0];}
+      renderMonthSelector();renderDaySelector();loadDay();
     };
     sel.appendChild(btn);
   });
@@ -438,7 +346,7 @@ function renderDaySelector(){
     const hasData=!!data[day];
     btn.className="day-btn"+(isActive?" active":"")+(isFuture?" future":"")+(hasData&&!isActive?" has-data":"");
     btn.textContent=label;
-    if(!isFuture){ btn.onclick=()=>{ activeDate=day; renderDaySelector(); loadDay(); document.getElementById("dateLabel").textContent=formatDate(day); }; }
+    if(!isFuture){btn.onclick=()=>{activeDate=day;renderDaySelector();loadDay();document.getElementById("dateLabel").textContent=formatDate(day);};}
     sel.appendChild(btn);
   });
   document.getElementById("dateLabel").textContent=formatDate(activeDate);
@@ -450,7 +358,7 @@ function renderSummary(){
   const data=loadAll();
   const days=Object.keys(data).sort().reverse();
   const sec=document.getElementById("summarySection");
-  if(!days.length){ sec.innerHTML=""; return; }
+  if(!days.length){sec.innerHTML="";return;}
   let html='<div class="summary-box"><div class="summary-title">Diary Summary</div>';
   let any=false;
   days.forEach(day=>{
@@ -461,7 +369,7 @@ function renderSummary(){
     if(!hasMeals&&!hasDrugs&&!hasSymptoms) return;
     any=true;
     html+='<div class="summary-day"><div class="summary-date">'+formatDate(day)+'</div>';
-    MEAL_FIELDS.forEach(id=>{ if(d[id]&&d[id].trim()){ const flagged=getHistamineItems(d[id]).length>0; html+='<div class="summary-line"><span class="lbl">'+LABELS[id]+': </span><span class="'+(flagged?'flagged':'')+'">'+d[id]+'</span></div>'; } });
+    MEAL_FIELDS.forEach(id=>{if(d[id]&&d[id].trim()){const flagged=getHistamineItems(d[id]).length>0;html+='<div class="summary-line"><span class="lbl">'+LABELS[id]+': </span><span class="'+(flagged?'flagged':'')+'">'+d[id]+'</span></div>';}});
     if(hasDrugs) html+='<div class="summary-drugs">💊 '+d.Drugs+'</div>';
     if(hasSymptoms) html+='<div class="summary-symptoms">⚡ '+d.Symptoms+'</div>';
     html+='</div>';
@@ -473,33 +381,32 @@ function renderSummary(){
 function exportDiary(){
   const data=loadAll();
   const days=Object.keys(data).sort();
-  if(!days.length){ alert("No entries yet."); return; }
+  if(!days.length){alert("No entries yet.");return;}
   let text="FOOD & SYMPTOM DIARY — ALLERGIST SUMMARY\nPatient: Dale Iannuzzi\n"+"=".repeat(50)+"\n\n";
   days.forEach(day=>{
     const d=data[day];
     text+=formatDate(day)+"\n"+"-".repeat(30)+"\n";
-    MEAL_FIELDS.forEach(id=>{ if(d[id]&&d[id].trim()){ const items=getHistamineItems(d[id]); text+=LABELS[id]+": "+d[id]; if(items.length) text+=" ⚠ [HIGH HISTAMINE: "+items.join(", ")+"]"; text+="\n"; } });
+    MEAL_FIELDS.forEach(id=>{if(d[id]&&d[id].trim()){const items=getHistamineItems(d[id]);text+=LABELS[id]+": "+d[id];if(items.length) text+=" ⚠ [HIGH HISTAMINE: "+items.join(", ")+"]";text+="\n";}});
     if(d.Drugs&&d.Drugs.trim()) text+="Drugs Taken: "+d.Drugs+"\n";
     if(d.Symptoms&&d.Symptoms.trim()) text+="Symptoms: "+d.Symptoms+"\n";
     text+="\n";
   });
   const a=document.createElement("a");
   a.href=URL.createObjectURL(new Blob([text],{type:"text/plain"}));
-  a.download="food-diary-dale.txt";
-  a.click();
+  a.download="food-diary-dale.txt";a.click();
 }
 
 function clearAll(){
   if(confirm("Clear ALL diary data? This cannot be undone.")){
-    localStorage.removeItem("fd2"); localStorage.removeItem("fd2_preloaded");
-    ALL_FIELDS.forEach(id=>{ document.getElementById("field_"+id).value=""; });
+    localStorage.removeItem("fd2");localStorage.removeItem("fd2_preloaded");
+    ALL_FIELDS.forEach(id=>{document.getElementById("field_"+id).value="";});
     MEAL_FIELDS.forEach(id=>checkHistamine(id));
-    renderDaySelector(); renderSummary();
+    renderDaySelector();renderSummary();
   }
 }
 
 function preload(){
-  if(localStorage.getItem("fd2_preloaded")==="v6") return;
+  if(localStorage.getItem("fd2_preloaded")==="v7") return;
   const existing=loadAll();
   const hist={
     "2026-06-03":{Breakfast:"Nothing",Lunch:"Canned tuna mixed with avocado mayonnaise on toasted challah bread with butter",MiddaySnack:"Nature Valley peanut butter oat bar",Dinner:"Roast porchetta sandwich with shredded/pickled cabbage, sriracha mayonnaise on brioche bun",AfterDinner:"Tim Hortons ice cap - milk, chocolate syrup and crushed ice",Drugs:"",Symptoms:"No symptoms"},
@@ -517,11 +424,11 @@ function preload(){
   };
   const merged={...hist};
   Object.keys(existing).forEach(day=>{
-    if(!merged[day]){ merged[day]=existing[day]; return; }
-    Object.keys(existing[day]).forEach(f=>{ if(existing[day][f]&&existing[day][f].trim()) merged[day][f]=existing[day][f]; });
+    if(!merged[day]){merged[day]=existing[day];return;}
+    Object.keys(existing[day]).forEach(f=>{if(existing[day][f]&&existing[day][f].trim()) merged[day][f]=existing[day][f];});
   });
   saveAll(merged);
-  localStorage.setItem("fd2_preloaded","v6");
+  localStorage.setItem("fd2_preloaded","v7");
 }
 
 preload();
@@ -532,4 +439,3 @@ renderSummary();
 </script>
 </body>
 </html>
-
