@@ -255,7 +255,7 @@ function hideSuggestions(fieldId){
   }, 150);
 }
 
-const TODAY = "2026-06-14";
+const TODAY = new Date().toISOString().split("T")[0];
 function pad(n){ return String(n).padStart(2,"0"); }
 function formatDate(d){ return new Date(d+"T12:00:00").toLocaleDateString("en-CA",{weekday:"long",month:"long",day:"numeric"}); }
 
@@ -327,7 +327,7 @@ function saveDay(){
   renderSummary();
 }
 
-let activeMonth="2026-06";
+let activeMonth=TODAY.substring(0,7);
 let activeDate=TODAY;
 
 function renderMonthSelector(){
@@ -422,7 +422,7 @@ function clearAll(){
 }
 
 function preload(){
-  if(localStorage.getItem("fd2_preloaded")==="v5") return;
+  if(localStorage.getItem("fd2_preloaded")==="v6") return;
   const existing=loadAll();
   const hist={
     "2026-06-03":{Breakfast:"Nothing",Lunch:"Canned tuna mixed with avocado mayonnaise on toasted challah bread with butter",MiddaySnack:"Nature Valley peanut butter oat bar",Dinner:"Roast porchetta sandwich with shredded/pickled cabbage, sriracha mayonnaise on brioche bun",AfterDinner:"Tim Hortons ice cap - milk, chocolate syrup and crushed ice",Drugs:"",Symptoms:"No symptoms"},
@@ -433,7 +433,10 @@ function preload(){
     "2026-06-08":{Breakfast:"Nature Valley chocolate oat bar",Lunch:"Shawarma chicken wrap with lettuce, cucumber, onions, parsley, hummus, tahini, and a little bit of hot sauce",Dinner:"8oz salmon fillet with salt & pepper, onion powder, garlic powder, side of chicken chow mein",AfterDinner:"1 cup black tea with milk / monk fruit sugar, 1 Nature Valley peanut butter oat bar",Drugs:"1 Prednisone + 1 Reactine, 1 each D3, MSM, NAC, OsteoMove. 10:15pm - 1 Benadryl, 1 stool softener, 1 Magnesium Citrate",Symptoms:"Woke up feeling a bit anxious, nerve tingling firing all over body, anxiety a little high today"},
     "2026-06-09":{Breakfast:"2 pcs toast with butter",Lunch:"Fried egg sandwich with bacon, lettuce, tomato, Swiss cheese, onion. Chicken nuggets with sweet spicy honey sauce",MiddaySnack:"Chicken bites with sweet honey glaze",Dinner:"Meatloaf with side of chicken chow mein",AfterDinner:"Nature Valley apple crisp oat bar, 1 cup black tea with monk fruit sugar",Drugs:"Breakfast - 1 Prednisone + 1 Reactine. Lunchtime - 1 each D3, MSM, NAC, OsteoMove. 10:15pm - 1 Benadryl, 1 stool softener, 1 Magnesium Citrate",Symptoms:"No anxiety feelings today. Sore right testicle - strange random pressure/pulsing"},
     "2026-06-10":{Breakfast:"Cobb salad with bacon, tomato, avocado, blue cheese, oil, vinegar, grilled chicken",Lunch:"2x boiled eggs on toast with butter",MiddaySnack:"1x small bag salt and vinegar chips",Dinner:"Cobb salad with bacon, tomato, avocado, blue cheese, oil, vinegar, grilled chicken, 3x chocolate chip cookies, 8oz chicken bites with sweet honey sauce",Drugs:"",Symptoms:""},
-    "2026-06-11":{Breakfast:"Two pieces of toast, two hard boiled eggs",Lunch:"Chicken Shawarma wrap with hummus, baba ghanoush, eggplant, onions, tomatoes, tahini, and hot sauce",Dinner:"Pork loin chop, zucchini, sweet potato, garlic powder, onion powder",AfterDinner:"Nature Valley apple crisp oat bar, 1 cup black tea with monk fruit sugar",Drugs:"One pill Prednisone, one pill Reactine",Symptoms:"No anxiety symptoms, no allergy symptoms. Saw allergist today - prescribed two EpiPens and Sandoz Bilastine 20mg"}
+    "2026-06-11":{Breakfast:"Two pieces of toast, two hard boiled eggs",Lunch:"Chicken Shawarma wrap with hummus, baba ghanoush, eggplant, onions, tomatoes, tahini, and hot sauce",Dinner:"Pork loin chop, zucchini, sweet potato, garlic powder, onion powder",AfterDinner:"Nature Valley apple crisp oat bar, 1 cup black tea with monk fruit sugar",Drugs:"One pill Prednisone, one pill Reactine",Symptoms:"No anxiety symptoms, no allergy symptoms. Saw allergist today - prescribed two EpiPens and Sandoz Bilastine 20mg"},
+    "2026-06-12":{Breakfast:"3x hard boiled eggs with 2pcs buttered toast",MiddaySnack:"Blue cheese & crackers",Dinner:"Pizza with mushrooms, pancetta, artichokes, anchovies, tomato sauce",Drugs:"Morning - 2x Bilastine 20mg pills. Evening - 2x Bilastine 20mg pills",Symptoms:"No symptoms - allergy or anxiety"},
+    "2026-06-13":{Lunch:"Veal parmigiana sandwich with tomato sauce and mozzarella cheese",Dinner:"8oz salmon marinated in olive oil, salt, pepper, cajun spice rub, 1/2 sweet potato, 1/2 zucchini - all air fried",AfterDinner:"Apple fritter, cup of tea with monk fruit sugar",Drugs:"Morning - 2x Bilastine 20mg pills. Evening - 2x Bilastine 20mg pills",Symptoms:"No allergy symptoms. Mild anxiety during lunch eating"},
+    "2026-06-14":{Lunch:"Two egg salad lettuce wraps - with head lettuce, 3x hard boiled eggs, avocado mayonnaise, salt & pepper",Drugs:"Morning - 2x Bilastine 20mg pills. Evening - 2x Bilastine 20mg pills",Symptoms:"Morning - anxiety on mid-alert, nerve firing sensations all over"}
   };
   const merged={...hist};
   Object.keys(existing).forEach(day=>{
@@ -441,7 +444,7 @@ function preload(){
     Object.keys(existing[day]).forEach(f=>{ if(existing[day][f]&&existing[day][f].trim()) merged[day][f]=existing[day][f]; });
   });
   saveAll(merged);
-  localStorage.setItem("fd2_preloaded","v5");
+  localStorage.setItem("fd2_preloaded","v6");
 }
 
 preload();
