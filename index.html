@@ -30,12 +30,6 @@ h1 { font-size: 24px; font-weight: normal; color: #e8dcc8; letter-spacing: 1px; 
 .meal-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #7eb8a4; }
 .histamine-badge { font-size: 9px; color: #e07a5f; background: rgba(224,122,95,0.15); padding: 2px 8px; border-radius: 10px; letter-spacing: 1px; display: none; }
 .histamine-badge.show { display: block; }
-.camera-row { display: flex; gap: 8px; align-items: flex-start; }
-.camera-row textarea { flex: 1; }
-.cam-btn { flex-shrink: 0; width: 44px; height: 44px; background: rgba(126,184,164,0.15); border: 1px solid #7eb8a4; border-radius: 10px; font-size: 20px; cursor: pointer; }
-.cam-btn:active { background: rgba(126,184,164,0.3); }
-.analyzing { font-size: 12px; color: #7eb8a4; letter-spacing: 1px; padding: 6px 0; animation: pulse 1.5s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 textarea { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid #2a3f50; border-radius: 10px; padding: 10px 14px; color: #e8dcc8; font-size: 15px; font-family: Georgia, serif; resize: none; outline: none; caret-color: white; -webkit-appearance: none; }
 textarea::placeholder { color: #4a6070; }
 textarea.flagged { border-color: rgba(224,122,95,0.5); }
@@ -82,60 +76,35 @@ textarea.flagged { border-color: rgba(224,122,95,0.5); }
 
 <div class="meal-block">
   <div class="meal-header"><span class="meal-label">Breakfast</span><span class="histamine-badge" id="badge_Breakfast">⚠ HIGH HISTAMINE</span></div>
-  <div class="camera-row">
-    <textarea id="field_Breakfast" rows="2" placeholder="What did you have for breakfast?"></textarea>
-    <button class="cam-btn" onclick="triggerCamera('Breakfast')">📷</button>
-    <input type="file" id="cam_Breakfast" accept="image/*" capture="environment" style="display:none" onchange="analyzePhoto(this,'Breakfast')">
-  </div>
-  <div class="analyzing" id="analyzing_Breakfast" style="display:none">🔍 Analyzing photo...</div>
+  <textarea id="field_Breakfast" rows="2" placeholder="What did you have for breakfast?"></textarea>
   <div class="histamine-box" id="box_Breakfast"><div class="histamine-box-title">High Histamine Items Detected</div><div class="histamine-tags" id="tags_Breakfast"></div></div>
   <div class="suggestions" id="sug_Breakfast" style="display:none"></div>
 </div>
 
 <div class="meal-block">
   <div class="meal-header"><span class="meal-label">Lunch</span><span class="histamine-badge" id="badge_Lunch">⚠ HIGH HISTAMINE</span></div>
-  <div class="camera-row">
-    <textarea id="field_Lunch" rows="2" placeholder="What did you have for lunch?"></textarea>
-    <button class="cam-btn" onclick="triggerCamera('Lunch')">📷</button>
-    <input type="file" id="cam_Lunch" accept="image/*" capture="environment" style="display:none" onchange="analyzePhoto(this,'Lunch')">
-  </div>
-  <div class="analyzing" id="analyzing_Lunch" style="display:none">🔍 Analyzing photo...</div>
+  <textarea id="field_Lunch" rows="2" placeholder="What did you have for lunch?"></textarea>
   <div class="histamine-box" id="box_Lunch"><div class="histamine-box-title">High Histamine Items Detected</div><div class="histamine-tags" id="tags_Lunch"></div></div>
   <div class="suggestions" id="sug_Lunch" style="display:none"></div>
 </div>
 
 <div class="meal-block">
   <div class="meal-header"><span class="meal-label">Midday Snack</span><span class="histamine-badge" id="badge_MiddaySnack">⚠ HIGH HISTAMINE</span></div>
-  <div class="camera-row">
-    <textarea id="field_MiddaySnack" rows="2" placeholder="What did you have for a midday snack?"></textarea>
-    <button class="cam-btn" onclick="triggerCamera('MiddaySnack')">📷</button>
-    <input type="file" id="cam_MiddaySnack" accept="image/*" capture="environment" style="display:none" onchange="analyzePhoto(this,'MiddaySnack')">
-  </div>
-  <div class="analyzing" id="analyzing_MiddaySnack" style="display:none">🔍 Analyzing photo...</div>
+  <textarea id="field_MiddaySnack" rows="2" placeholder="What did you have for a midday snack?"></textarea>
   <div class="histamine-box" id="box_MiddaySnack"><div class="histamine-box-title">High Histamine Items Detected</div><div class="histamine-tags" id="tags_MiddaySnack"></div></div>
   <div class="suggestions" id="sug_MiddaySnack" style="display:none"></div>
 </div>
 
 <div class="meal-block">
   <div class="meal-header"><span class="meal-label">Dinner</span><span class="histamine-badge" id="badge_Dinner">⚠ HIGH HISTAMINE</span></div>
-  <div class="camera-row">
-    <textarea id="field_Dinner" rows="2" placeholder="What did you have for dinner?"></textarea>
-    <button class="cam-btn" onclick="triggerCamera('Dinner')">📷</button>
-    <input type="file" id="cam_Dinner" accept="image/*" capture="environment" style="display:none" onchange="analyzePhoto(this,'Dinner')">
-  </div>
-  <div class="analyzing" id="analyzing_Dinner" style="display:none">🔍 Analyzing photo...</div>
+  <textarea id="field_Dinner" rows="2" placeholder="What did you have for dinner?"></textarea>
   <div class="histamine-box" id="box_Dinner"><div class="histamine-box-title">High Histamine Items Detected</div><div class="histamine-tags" id="tags_Dinner"></div></div>
   <div class="suggestions" id="sug_Dinner" style="display:none"></div>
 </div>
 
 <div class="meal-block">
   <div class="meal-header"><span class="meal-label">After Dinner Snack</span><span class="histamine-badge" id="badge_AfterDinner">⚠ HIGH HISTAMINE</span></div>
-  <div class="camera-row">
-    <textarea id="field_AfterDinner" rows="2" placeholder="What did you have after dinner?"></textarea>
-    <button class="cam-btn" onclick="triggerCamera('AfterDinner')">📷</button>
-    <input type="file" id="cam_AfterDinner" accept="image/*" capture="environment" style="display:none" onchange="analyzePhoto(this,'AfterDinner')">
-  </div>
-  <div class="analyzing" id="analyzing_AfterDinner" style="display:none">🔍 Analyzing photo...</div>
+  <textarea id="field_AfterDinner" rows="2" placeholder="What did you have after dinner?"></textarea>
   <div class="histamine-box" id="box_AfterDinner"><div class="histamine-box-title">High Histamine Items Detected</div><div class="histamine-tags" id="tags_AfterDinner"></div></div>
   <div class="suggestions" id="sug_AfterDinner" style="display:none"></div>
 </div>
@@ -260,34 +229,6 @@ ALL_FIELDS.forEach(id=>{
   ta.addEventListener("focus",()=>showSuggestions(id));
 });
 
-function triggerCamera(fieldId){document.getElementById("cam_"+fieldId).click();}
-
-async function analyzePhoto(input,fieldId){
-  if(!input.files||!input.files[0]) return;
-  const file=input.files[0];
-  const analyzing=document.getElementById("analyzing_"+fieldId);
-  const ta=document.getElementById("field_"+fieldId);
-  analyzing.style.display="block";
-  try{
-    const base64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(file);});
-    const response=await fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        model:"claude-sonnet-4-6",max_tokens:300,
-        messages:[{role:"user",content:[
-          {type:"image",source:{type:"base64",media_type:file.type||"image/jpeg",data:base64}},
-          {type:"text",text:"Identify this food. List the dish name and all likely ingredients in one concise sentence. No preamble, just the description."}
-        ]}]
-      })
-    });
-    const data=await response.json();
-    const desc=data.content?.[0]?.text||"";
-    if(desc){ta.value=desc.trim();if(MEAL_FIELDS.includes(fieldId)) checkHistamine(fieldId);}
-  }catch(err){console.error("Photo analysis error:",err);}
-  finally{analyzing.style.display="none";input.value="";}
-}
-
 function loadAll(){try{return JSON.parse(localStorage.getItem("fd2")||"{}");}catch(e){return {};}}
 function saveAll(data){localStorage.setItem("fd2",JSON.stringify(data));}
 
@@ -406,7 +347,7 @@ function clearAll(){
 }
 
 function preload(){
-  if(localStorage.getItem("fd2_preloaded")==="v7") return;
+  if(localStorage.getItem("fd2_preloaded")==="v8") return;
   const existing=loadAll();
   const hist={
     "2026-06-03":{Breakfast:"Nothing",Lunch:"Canned tuna mixed with avocado mayonnaise on toasted challah bread with butter",MiddaySnack:"Nature Valley peanut butter oat bar",Dinner:"Roast porchetta sandwich with shredded/pickled cabbage, sriracha mayonnaise on brioche bun",AfterDinner:"Tim Hortons ice cap - milk, chocolate syrup and crushed ice",Drugs:"",Symptoms:"No symptoms"},
@@ -420,7 +361,12 @@ function preload(){
     "2026-06-11":{Breakfast:"Two pieces of toast, two hard boiled eggs",Lunch:"Chicken Shawarma wrap with hummus, baba ghanoush, eggplant, onions, tomatoes, tahini, and hot sauce",Dinner:"Pork loin chop, zucchini, sweet potato, garlic powder, onion powder",AfterDinner:"Nature Valley apple crisp oat bar, 1 cup black tea with monk fruit sugar",Drugs:"One pill Prednisone, one pill Reactine",Symptoms:"No anxiety symptoms, no allergy symptoms. Saw allergist today - prescribed two EpiPens and Sandoz Bilastine 20mg"},
     "2026-06-12":{Breakfast:"3x hard boiled eggs with 2pcs buttered toast",MiddaySnack:"Blue cheese & crackers",Dinner:"Pizza with mushrooms, pancetta, artichokes, anchovies, tomato sauce",Drugs:"Morning - 2x Bilastine 20mg pills. Evening - 2x Bilastine 20mg pills",Symptoms:"No symptoms - allergy or anxiety"},
     "2026-06-13":{Lunch:"Veal parmigiana sandwich with tomato sauce and mozzarella cheese",Dinner:"8oz salmon marinated in olive oil, salt, pepper, cajun spice rub, 1/2 sweet potato, 1/2 zucchini - all air fried",AfterDinner:"Apple fritter, cup of tea with monk fruit sugar",Drugs:"Morning - 2x Bilastine 20mg pills. Evening - 2x Bilastine 20mg pills",Symptoms:"No allergy symptoms. Mild anxiety during lunch eating"},
-    "2026-06-14":{Lunch:"Two egg salad lettuce wraps - with head lettuce, 3x hard boiled eggs, avocado mayonnaise, salt & pepper",Drugs:"Morning - 2x Bilastine 20mg pills. Evening - 2x Bilastine 20mg pills",Symptoms:"Morning - anxiety on mid-alert, nerve firing sensations all over"}
+    "2026-06-14":{Lunch:"Two egg salad lettuce wraps - with head lettuce, 3x hard boiled eggs, avocado mayonnaise, salt & pepper",Dinner:"10oz salmon fillet, marinated in olive oil, salt and pepper (air fried), with side garden salad",Drugs:"Morning - 2x Bilastine 20mg pills. Evening - 2x Bilastine 20mg pills",Symptoms:"Morning - anxiety on mid-alert, nerve firing sensations all over"},
+    "2026-06-15":{Dinner:"2x cups Campbells concentrated beef broth",Drugs:"Morning - 2x Bilastine 20mg pills. Evening - 2x Bilastine 20mg pills",Symptoms:"No symptoms. Fasting - preparation for Tuesday colonoscopy & gastrointestinal scope"},
+    "2026-06-16":{Lunch:"2x cups lentil soup, 1x falafel pita sandwich with hummus, baba ghanoush, onions, cucumbers, tahini",AfterDinner:"1x Nature Valley chocolate oat bar",Drugs:"Morning - 2x Bilastine 20mg pills. Evening - 2x Bilastine 20mg pills",Symptoms:"No symptoms today"},
+    "2026-06-17":{Lunch:"Nature Valley peanut butter oat bar",MiddaySnack:"Nature Valley chocolate oat bar",Dinner:"2x pcs veal with parmigiana cheese, Caesar salad, rigatoni with tomato sauce, 2x pcs branzino fish, 2x pcs focaccia bread with garlic butter, 3x chocolate chip cookies, 1x mini cheesecake, 7oz rum",Drugs:"Morning - 2x Bilastine 20mg pills. Evening - 2x Bilastine 20mg pills",Symptoms:"No allergy symptoms today"},
+    "2026-06-18":{Breakfast:"1x large plain flat bagel, toasted with butter, topped with egg salad (salt and pepper + avocado mayonnaise, chives)",Dinner:"Large bowl of packaged chicken noodle soup",AfterDinner:"1x Aero chocolate bar",Drugs:"Morning - 2x Bilastine 20mg pills. Evening - 2x Bilastine 20mg pills",Symptoms:"No anxiety today"},
+    "2026-06-19":{Dinner:"1x pc tilapia (air fryer) with olive oil and salt, 1x cup penne pasta with drizzle of olive oil",Drugs:"Morning - 2x Bilastine 20mg pills + 1x Rabeprazole. Evening - 2x Bilastine 20mg pills",Symptoms:"Woke up Friday am with tight throat, mild reflux"}
   };
   const merged={...hist};
   Object.keys(existing).forEach(day=>{
@@ -428,7 +374,7 @@ function preload(){
     Object.keys(existing[day]).forEach(f=>{if(existing[day][f]&&existing[day][f].trim()) merged[day][f]=existing[day][f];});
   });
   saveAll(merged);
-  localStorage.setItem("fd2_preloaded","v7");
+  localStorage.setItem("fd2_preloaded","v8");
 }
 
 preload();
